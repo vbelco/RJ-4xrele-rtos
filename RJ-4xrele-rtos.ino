@@ -1,5 +1,5 @@
 /**
-*               Riadiaca  Jednotka
+*               Riadiaca  Jednotka - FreeRTOS Version
 *               CCSIPRO™
 **/
 #include <map>
@@ -16,6 +16,11 @@
 #include <Wire.h>
 #include <Adafruit_PN532.h> // https://github.com/adafruit/Adafruit-PN532
 #include <WebServer.h>      //esp32 core
+
+// FreeRTOS includes
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <freertos/queue.h>
 
 uint64_t IRAM_ATTR myMillis() {
   return (uint64_t)(esp_timer_get_time() / 1000);  // Mikrosekundy na milisekundy
@@ -45,6 +50,14 @@ Stav stav = {
   .lan = 2,
   .mqtt = 2,
 };
+
+// FreeRTOS Queue pre príkazy
+struct QueueItem {
+  String jsonCommand;
+  String source; // "serial", "mqtt", "api"
+};
+
+QueueHandle_t commandQueue;
 
 // Layers stack
 WiFiClientSecure espClient;
@@ -181,7 +194,7 @@ void setup()
   esp_task_wdt_config_t twdt_config = {
     .timeout_ms = WDT_TIMEOUT,
     .idle_core_mask = (1 << 0) | (1 << 1),    // nastavenie jadra 0 aj jadra 1 na monitoring WDT
-    .trigger_panic = true, //zapnutie panic vypisu v pripde nastatia WDT
+    .trigger_panic = true, //zapnutie panic vypisu v pripade nastatia WDT
   };
   esp_task_wdt_deinit();// Deinicializujeme TWDT, ak je už inicializovaný, aby sme ho mohli nakonfigurovať nanovo
   ESP_ERROR_CHECK(esp_task_wdt_init(&twdt_config));
@@ -189,80 +202,35 @@ void setup()
   printf("TWDT initialized\n");
   last_dtw_millis = millis(); //pociatocne nastavenie casovacia na wdt
 
-  Serial.println("Processing to loop(), good luck!");
+  // ========================================
+  // FreeRTOS SETUP
+  // ========================================
+  
+  // Vytvorenie FreeRTOS command queue
+  commandQueue = xQueueCreate(10, sizeof(QueueItem));
+  if (commandQueue == NULL) {
+    Serial.println("Failed to create command queue!");
+  } else {
+    Serial.println("Command queue created successfully");
+  }
+  
+  // Vytvorenie FreeRTOS taskov (scheduler rozhoduje o core)
+  xTaskCreate(serialTask,    "Serial",    4096, NULL, 1, NULL);
+  xTaskCreate(mqttTask,      "MQTT",      8192, NULL, 1, NULL);
+  xTaskCreate(apiTask,       "API",       8192, NULL, 1, NULL);
+  xTaskCreate(relayTask,     "Relay",     4096, NULL, 2, NULL);
+  xTaskCreate(rgbLedTask,    "RGB",       2048, NULL, 1, NULL);
+  xTaskCreate(watchdogTask,  "Watchdog",  2048, NULL, 1, NULL);
+  
+  Serial.println("FreeRTOS tasks created - scheduler running!");
+  Serial.println("Processing to FreeRTOS tasks, good luck!");
 }
 
 /*********************************************
-*  L O O P
+*  L O O P  (prázdny - FreeRTOS prevezme kontrolu)
 **********************************************/
 void loop()
 {
-  currentMillis = millis();
-
-  /*
-  *  sekcia mqtt kontroly, kontrolova a pripajat sa bude, len ked to bude povolene globalnou premennou
-  *  a zaroven musi byt pripojeny ethernet (stav.lan == 1)
-  */
-  if (is_mqtt_allowed && stav.lan == 1) {
-    if (!mqtt.connected()) {
-      uint32_t t = millis();
-
-      // Počkáme, kým neuplynie 10 s od posledného pokusu
-      if ((t - lastReconnectAttempt) >= 10000L) {
-        lastReconnectAttempt = t;
-        // Teraz reálne skúsime pripojiť
-        bool status = mqttConnect();
-        if (!status) {
-          last_connection_attempt++;
-          Serial.println("=== MQTT NOT CONNECTED ===");
-          if (last_connection_attempt > 3) {
-            Serial.println("Restarting...");
-            ESP.restart();
-          }
-        } else {
-          // Uspech
-          last_connection_attempt = 0;
-        }
-      }
-      // Dáme trochu času, aby sme nešli hneď do ďalšieho loop
-      delay(100);
-      return;
-    } else {
-      // Sme pripojení - vynulujeme počitadlo neúspešných pripojení
-      last_connection_attempt = 0;
-    }
-    mqtt.loop();
-  } else { //nechceme byt pripojeny k brokeru alebo nieje pripojeny ethernet
-    mqtt.disconnect();
-  }
-
-  server.handleClient(); //udrzanie API servera nazivo
-
-  /*
-  * kontrola na koniec otvorenia portu, teda na jeho vypnutie
-  */
-  for (itr = koniec.begin(); itr != koniec.end(); itr++) {
-    // Vypne port len ak:
-    // 1. Cas vypnutia je kladny (timer bezi)
-    // 2. Cas vypnutia uz ubehol
-    long currentMillisLong = (long)currentMillis; // explicitna konverzia
-    if ((itr->second > 0) && (itr->second < currentMillisLong)) {
-      vypni(itr->first);
-    }
-  }//end for
-
-  /**
-  *  sekcia monitoringu Serioveho portu
-  */
-  processSerial();        // obslúži Serial
-
-  // Spracovanie blikania RGB LED
-  processRgbBlink();
-
-  // resetting WDT every 20s
-  if (millis() - last_dtw_millis >= 20000) {
-    //Serial.println("Resetting WDT...");
-    ESP_ERROR_CHECK(esp_task_wdt_reset());
-    last_dtw_millis = millis();
-  }
+  // Prázdny loop - FreeRTOS scheduler prevezme kontrolu
+  vTaskDelay(pdMS_TO_TICKS(1000));
 } // end loop
