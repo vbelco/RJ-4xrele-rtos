@@ -1,0 +1,10 @@
+# Python závislosti pre MQTT a HTTP Test Runner
+
+# MQTT klient
+paho-mqtt>=1.6.1
+
+# YAML parser pre konfiguračné súbory
+PyYAML>=6.0
+
+# HTTP requests klient
+requests>=2.31.0

@@ -1,0 +1,346 @@
+# ========================================
+# GATE TIMING TESTS - Komplexné časové scenáre
+# ========================================
+# Testovanie presnosti časovania, predlžovania a min_d parametra
+
+# Konfigurácia MQTT sa načítava z .env súboru
+mqtt:
+  timeout: 10  # Dlhší timeout pre časové testy
+
+test_execution:
+  verbose: true
+  save_report: true
+  report_format: "html"
+
+tests:
+  # ========== TEST 1: Základné časovanie ==========
+  - id: TIMING_01
+    name: "Základné časovanie - 3s ON, kontrola vypnutia"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 3000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE1"
+          value: "GATE_UP"
+        wait_after: 3.0  # Čakaj 3s (celkom 3.5s od zapnutia - relé už má byť OFF)
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE1"
+          value: "GATE_DOWN"
+        note: "Po 3.5s má byť relé vypnuté"
+
+  # ========== TEST 2: Predlžovanie (extending) ==========
+  - id: TIMING_02
+    name: "Predlžovanie - prvý príkaz 2s, po 0.5s druhý príkaz 3s → celkom 3.5s"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 2000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        note: "Zapnutie na 2s"
+        wait_after: 0.5  # Čakaj 0.5s (zostáva 1.5s)
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 3000
+        note: "Predĺženie na 3s od teraz (celkom 3.5s)"
+        wait_after: 1.0  # Čakaj 1s (celkom 1.5s)
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE2"
+          value: "GATE_UP"
+        note: "Po 1.5s má byť ešte ON"
+        wait_after: 2.5  # Čakaj 2.5s (celkom 4s)
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE2"
+          value: "GATE_DOWN"
+        note: "Po 4s má byť vypnuté (predĺžené z 2s na 3.5s)"
+
+  # ========== TEST 3: min_d parameter ==========
+  - id: TIMING_03
+    name: "min_d - krátky príkaz d=500ms s min_d=5s → výsledok 5s"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 500
+          min_d: 5000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        note: "min_d=5s má nastaviť trvanie na 5s (d=500ms je kratšie)"
+        wait_after: 4.5  # Čakaj 4.5s
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE3"
+          value: "GATE_UP"
+        note: "Po 4.5s má byť ešte ON"
+        wait_after: 1.0  # Čakaj 1s (celkom 5.5s)
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE3"
+          value: "GATE_DOWN"
+        note: "Po 5.5s má byť vypnuté"
+        note: "Po 4.5s má byť ešte ON"
+        wait_after: 1.0  # Čakaj 1s (celkom 5.5s)
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE3"
+          value: "GATE_DOWN"
+        note: "Po 5.5s má byť vypnuté"
+
+  # ========== TEST 4: Viacnásobné predlžovanie ==========
+  - id: TIMING_04
+    name: "Viacnásobné predlžovanie - 3x príkaz po 1s"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE4"
+          d: 2000
+        wait_after: 1.0
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE4"
+          d: 2000
+        wait_after: 1.0
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE4"
+          d: 2000
+        note: "Tretí príkaz - ešte 2s od teraz (bez odpovede)"
+        wait_after: 1.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE4"
+          value: "GATE_UP"
+        note: "Po 3.5s má byť ešte ON"
+        wait_after: 1.0
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE4"
+          value: "GATE_DOWN"
+        note: "Po 4.5s má byť vypnuté"
+
+  # ========== TEST 5: Okamžité vypnutie počas behu ==========
+  - id: TIMING_05
+    name: "Okamžité vypnutie - príkaz d=0 počas behu"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 10000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        wait_after: 2.0
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE1"
+          value: "GATE_UP"
+        wait_after: 0.5
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: "0"
+        note: "Okamžité vypnutie d=0 (ESP32 neodpovedá počas behu)"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE1"
+          value: "GATE_DOWN"
+        note: "Ihneď má byť vypnuté"
+
+  # ========== TEST 6: min_d s krátkym predĺžením ==========
+  - id: TIMING_06
+    name: "min_d - krátky príkaz 500ms, min_d=3s → výsledok 3s"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 500
+          min_d: 3000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        note: "Prvý príkaz s min_d=3s"
+        wait_after: 2.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE2"
+          value: "GATE_UP"
+        note: "Po 2.5s má byť ešte ON kvôli min_d=3s"
+        wait_after: 1.0
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE2"
+          value: "GATE_DOWN"
+        note: "Po 3.5s má byť vypnuté"
+
+  # ========== TEST 7: Sekvenčné spínanie rôznych brán ==========
+  - id: TIMING_07
+    name: "Paralelné časovanie - GATE1 3s, GATE2 2s naraz"
+    steps:
+      # Najprv vypneme všetky GATE aby sme mali čistý stav
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 0
+        note: "Vypnutie GATE1 pred testom"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 0
+        note: "Vypnutie GATE2 pred testom"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 3000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        note: "Zapnutie GATE1 na 3s"
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 2000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        wait_after: 1.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "contains"
+          value: "GATE_UP"
+        note: "Po 1.7s obe brány ešte ON"
+        wait_after: 1.0
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE2"
+          value: "GATE_DOWN"
+        note: "Po 2.7s GATE2 už OFF"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE1"
+          value: "GATE_DOWN"
+        note: "Po 3.2s GATE1 už OFF"
+
+  # ========== TEST 8: Stres test - rýchle predlžovanie ==========
+  - id: TIMING_08
+    name: "Stres test - 5x príkaz 1s v rýchlom slede"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 1000
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 1000
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 1000
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 1000
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 1000
+        note: "Posledný príkaz - ešte 1s od teraz"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE3"
+          value: "GATE_UP"
+        note: "Po 1.3s má byť ešte ON"
+        wait_after: 1.0
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE3"
+          value: "GATE_DOWN"
+        note: "Po 2.3s má byť vypnuté"

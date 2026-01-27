@@ -1,0 +1,209 @@
+# Konfigurácia MQTT pripojenia
+# Poznámka: MQTT konfigurácia sa načítava z .env súboru
+# Ak chceš prepísať hodnoty z .env, zadaj ich tu:
+mqtt: {}
+  # broker: "dev4.ccsipro.sk"  # voliteľné - použije sa z .env
+  # port: 8883
+  # username: "prototip"
+  # password: "Rff5Gggs899"
+  # use_tls: true
+  # ca_cert: "broker.crt"
+  # topic_send: "system/vbelco/eth-liligo1"
+  # topic_receive: "res/system/vbelco/eth-liligo1"
+  # timeout: 5
+
+# Testové prípady
+# Každý test má:
+#   - id: unikátny identifikátor
+#   - name: popis testu
+#   - command: JSON príkaz na odoslanie
+#   - expected: očakávaná odpoveď (môže byť string, regex, alebo contains)
+#   - expected_type: "exact" | "contains" | "regex" | "json_key"
+#   - wait_after: sekundy čakania po teste (voliteľné)
+
+tests:
+  # ========== ZÁKLADNÉ TESTY ==========
+  - id: TC01
+    name: "Ping test - overenie pripojenia"
+    command:
+      a: "ping"
+    expected: "pingOK"
+    expected_type: "exact"
+    
+  - id: TC02
+    name: "Status test - získanie stavu zariadenia"
+    command:
+      a: "status"
+    expected_type: "json_key"
+    expected: "my_hostname"  # kontrola či odpoveď obsahuje kľúč "my_hostname"
+    
+  - id: TC03
+    name: "Help test - získanie nápovedy"
+    command:
+      a: "help"
+    expected_type: "json_key"
+    expected: "help"
+    
+  - id: TC04
+    name: "GetFlash test - získanie nastavení z flash"
+    command:
+      a: "getflash"
+    expected_type: "json_key"
+    expected: "getflash"
+
+  # ========== GATE TESTY (sekundy) ==========
+  - id: TC10
+    name: "Gate - zapnutie GATE1 na 5 sekúnd"
+    command:
+      a: "gate"
+      g: "4"
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    
+  - id: TC11
+    name: "Gate - vypnutie GATE1"
+    command:
+      a: "gate"
+      g: "4"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 1
+    
+  - id: TC12
+    name: "Gate - zapnutie GATE2 na 3 sekundy"
+    command:
+      a: "gate"
+      g: "12"
+      d: "3"
+    expected_type: "contains"
+    expected: "gate"
+    
+  - id: TC13
+    name: "Gate - nekonečné zapnutie GATE1"
+    command:
+      a: "gate"
+      g: "4"
+      d: "11111"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 2
+    
+  - id: TC14
+    name: "Gate - vypnutie nekonečného GATE1"
+    command:
+      a: "gate"
+      g: "4"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+
+  # ========== GATE_MS TESTY (milisekundy) ==========
+  - id: TC20
+    name: "Gate_ms - zapnutie GATE1 na 3000ms"
+    command:
+      a: "gate_ms"
+      g: "4"
+      d: "3000"
+    expected_type: "contains"
+    expected: "gate"
+    
+  - id: TC21
+    name: "Gate_ms - zapnutie s min_d parametrom"
+    command:
+      a: "gate_ms"
+      g: "4"
+      d: "3000"
+      min_d: "5000"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 2
+    
+  - id: TC22
+    name: "Gate_ms - vypnutie GATE1"
+    command:
+      a: "gate_ms"
+      g: "4"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    
+  - id: TC23
+    name: "Gate_ms - nekonečné zapnutie"
+    command:
+      a: "gate_ms"
+      g: "4"
+      d: "11111"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 1
+    
+  - id: TC24
+    name: "Gate_ms - vypnutie po nekonečnom"
+    command:
+      a: "gate_ms"
+      g: "4"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+
+  # ========== CHYBOVÉ STAVY ==========
+  - id: TC30
+    name: "Gate - neplatný GPIO pin"
+    command:
+      a: "gate"
+      g: "99"
+      d: "5"
+    expected: "Invalid GPIO pin"
+    expected_type: "exact"
+    
+  - id: TC31
+    name: "Gate - chýbajúci parameter g"
+    command:
+      a: "gate"
+      d: "5"
+    expected: "action gate failed"
+    expected_type: "exact"
+    
+  - id: TC32
+    name: "Gate - chýbajúci parameter d"
+    command:
+      a: "gate"
+      g: "4"
+    expected: "action gate failed"
+    expected_type: "exact"
+    
+  - id: TC33
+    name: "Neznámy príkaz"
+    command:
+      a: "neexistujuci_prikaz"
+    expected: "unknown request"
+    expected_type: "exact"
+
+  # ========== FLASH TESTY ==========
+  - id: TC40
+    name: "SetFlash - nastavenie mqtt_port (len ak chceš meniť nastavenia)"
+    enabled: false  # vypnuté defaultne, aby sa nemenili nastavenia
+    command:
+      a: "setflash"
+      mqtt_port: 8883
+    expected_type: "contains"
+    expected: "mqtt_port"
+    
+  - id: TC41
+    name: "SetFlash - neplatná hodnota pre is_mqtt_allowed"
+    enabled: false
+    command:
+      a: "setflash"
+      is_mqtt_allowed: 5
+    expected_type: "contains"
+    expected: "neplatna hodnota"
+
+# Nastavenia behu testov
+test_execution:
+  stop_on_fail: false  # pokračuj aj po zlyhaní testu
+  delay_between_tests: 0.5  # sekúnd medzi testami
+  verbose: true  # detailný výpis
+  save_report: true  # ulož report do súboru
+  report_format: "html"  # "html", "json", alebo "text"

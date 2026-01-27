@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Report - 20260118_014609</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }
+        .summary { background: #e8f5e9; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .summary-item { text-align: center; }
+        .summary-item .value { font-size: 32px; font-weight: bold; }
+        .summary-item .label { color: #666; font-size: 14px; }
+        .passed { color: #4CAF50; }
+        .failed { color: #f44336; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #4CAF50; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; }
+        tr:hover { background: #f5f5f5; }
+        .test-passed { background: #e8f5e9; }
+        .test-failed { background: #ffebee; }
+        .test-skipped { background: #fff9c4; }
+        .command { font-family: monospace; background: #f5f5f5; padding: 8px; border-radius: 3px; font-size: 11px; line-height: 1.6; display: block; }
+        .error { color: #f44336; font-size: 12px; margin-top: 5px; }
+        .source-badge { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+        .source-mqtt { background: #2196F3; color: white; }
+        .source-http { background: #FF9800; color: white; }
+        .source-gate { background: #9C27B0; color: white; }
+        .source-timing { background: #00BCD4; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ESP32 Test Report - Všetky testy</h1>
+        <p>Dátum: 2026-01-18 01:46:09</p>
+        
+        <div class="summary">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="value">86</div>
+                    <div class="label">Celkovo testov</div>
+                </div>
+                <div class="summary-item passed">
+                    <div class="value">86</div>
+                    <div class="label">Úspešných</div>
+                </div>
+                <div class="summary-item failed">
+                    <div class="value">0</div>
+                    <div class="label">Neúspešných</div>
+                </div>
+                <div class="summary-item">
+                    <div class="value">100.0%</div>
+                    <div class="label">Úspešnosť</div>
+                </div>
+                <div class="summary-item">
+                    <div class="value">120.1s</div>
+                    <div class="label">Celkový čas</div>
+                </div>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Typ</th>
+                    <th>ID</th>
+                    <th>Názov</th>
+                    <th>Príkaz/Request</th>
+                    <th>Výsledok</th>
+                    <th>Čas</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC01</strong></td>
+                    <td>Ping test - overenie pripojenia</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'ping'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC02</strong></td>
+                    <td>Status test - získanie stavu zariadenia</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC03</strong></td>
+                    <td>Help test - získanie nápovedy</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'help'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC04</strong></td>
+                    <td>GetFlash test - získanie nastavení z flash</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'getflash'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC10</strong></td>
+                    <td>Gate - zapnutie GATE1 na 5 sekúnd</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '4', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC11</strong></td>
+                    <td>Gate - vypnutie GATE1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '4', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC12</strong></td>
+                    <td>Gate - zapnutie GATE2 na 3 sekundy</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '12', 'd': '3'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC13</strong></td>
+                    <td>Gate - nekonečné zapnutie GATE1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '4', 'd': '11111'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC14</strong></td>
+                    <td>Gate - vypnutie nekonečného GATE1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '4', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC20</strong></td>
+                    <td>Gate_ms - zapnutie GATE1 na 3000ms</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': '4', 'd': '3000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC21</strong></td>
+                    <td>Gate_ms - zapnutie s min_d parametrom</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': '4', 'd': '3000', 'min_d': '5000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC22</strong></td>
+                    <td>Gate_ms - vypnutie GATE1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': '4', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC23</strong></td>
+                    <td>Gate_ms - nekonečné zapnutie</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': '4', 'd': '11111'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC24</strong></td>
+                    <td>Gate_ms - vypnutie po nekonečnom</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': '4', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC30</strong></td>
+                    <td>Gate - neplatný GPIO pin</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '99', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC31</strong></td>
+                    <td>Gate - chýbajúci parameter g</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC32</strong></td>
+                    <td>Gate - chýbajúci parameter d</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': '4'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-mqtt">MQTT</span></td>
+                    <td><strong>TC33</strong></td>
+                    <td>Neznámy príkaz</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'neexistujuci_prikaz'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NAME_01</strong></td>
+                    <td>Gate GATE1 - zapnutie pomocou textového názvu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE1', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NAME_02</strong></td>
+                    <td>Gate GATE2 - zapnutie pomocou textového názvu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE2', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NAME_03</strong></td>
+                    <td>Gate GATE3 - zapnutie pomocou textového názvu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE3', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NAME_04</strong></td>
+                    <td>Gate GATE4 - zapnutie pomocou textového názvu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE4', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NAME_05</strong></td>
+                    <td>Gate GATE1 - vypnutie pomocou textového názvu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE1', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_MS_NAME_01</strong></td>
+                    <td>Gate_ms GATE1 - zapnutie pomocou textového názvu (ms)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': 'GATE1', 'd': '3000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_MS_NAME_02</strong></td>
+                    <td>Gate_ms GATE2 - zapnutie pomocou textového názvu (ms)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': 'GATE2', 'd': '3000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_MS_NAME_03</strong></td>
+                    <td>Gate_ms GATE3 - vypnutie pomocou textového názvu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': 'GATE3', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NUM_01</strong></td>
+                    <td>Gate - zapnutie pomocou číselného pinu (GATE1=4)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 4, 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NUM_02</strong></td>
+                    <td>Gate - zapnutie pomocou číselného pinu (GATE2=12)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 12, 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_NUM_03</strong></td>
+                    <td>Gate - vypnutie pomocou číselného pinu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 4, 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_MS_NUM_01</strong></td>
+                    <td>Gate_ms - zapnutie pomocou číselného pinu (ms)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': 15, 'd': '2000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_INVALID_01</strong></td>
+                    <td>Gate - neplatný textový názov GATE5</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE5', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_INVALID_02</strong></td>
+                    <td>Gate - neplatný textový názov RELAY1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'RELAY1', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_INVALID_03</strong></td>
+                    <td>Gate - náhodný text</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'random_text', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_INVALID_04</strong></td>
+                    <td>Gate - neplatné číselné pin 99</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 99, 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_MS_INVALID_01</strong></td>
+                    <td>Gate_ms - neplatný názov pinu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': 'INVALID', 'd': '1000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_RID_01</strong></td>
+                    <td>Gate GATE1 s RID - textový názov</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE1', 'd': '5', 'rid': 'test-rid-001'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_RID_02</strong></td>
+                    <td>Gate číselný pin s RID</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 4, 'd': '5', 'rid': 'test-rid-002'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_MS_RID_01</strong></td>
+                    <td>Gate_ms GATE2 s RID</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate_ms', 'g': 'GATE2', 'd': '3000', 'rid': 'u876sgx57sg'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_INVALID_RID_01</strong></td>
+                    <td>Neplatný pin s RID - kontrola formátu odpovede</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'INVALID_GATE', 'd': '5', 'rid': 'error-test-001'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_STRESS_00</strong></td>
+                    <td>Príprava - vypnutie všetkých pred stress testami</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 4, 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_STRESS_01</strong></td>
+                    <td>Rýchle prepínanie medzi textovými názvami</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE1', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_STRESS_02</strong></td>
+                    <td>Rýchle prepínanie - GATE2</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE2', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_STRESS_03</strong></td>
+                    <td>Rýchle prepínanie - číselný pin</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 15, 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-gate">MQTT Gate Pins</span></td>
+                    <td><strong>GATE_STRESS_04</strong></td>
+                    <td>Vypnutie všetkých</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'gate', 'g': 'GATE1', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_01</strong></td>
+                    <td>Základné časovanie - 3s ON, kontrola vypnutia</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (3 krokov):<br>1. {"a": "gate_ms", "g": "GATE1", "d": 3000} ⏱ 0.5s<br>2. {"a": "status"} ⏱ 3.0s<br>3. {"a": "status"} (Po 3.5s má byť relé vypnuté)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>3.80s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_02</strong></td>
+                    <td>Predlžovanie - prvý príkaz 2s, po 0.5s druhý príkaz 3s → celkom 3.5s</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (4 krokov):<br>1. {"a": "gate_ms", "g": "GATE2", "d": 2000} ⏱ 0.5s (Zapnutie na 2s)<br>2. {"a": "gate_ms", "g": "GATE2", "d": 3000} ⏱ 1.0s (Predĺženie na 3s od teraz (celkom 3.5s))<br>3. {"a": "status"} ⏱ 2.5s (Po 1.5s má byť ešte ON)<br>4. {"a": "status"} (Po 4s má byť vypnuté (predĺžené z 2s na 3.5s))</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>4.40s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_03</strong></td>
+                    <td>min_d - krátky príkaz d=500ms s min_d=5s → výsledok 5s</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (4 krokov):<br>1. {"a": "gate_ms", "g": "GATE3", "d": 500, "min_d": 5000} ⏱ 4.5s (min_d=5s má nastaviť trvanie na 5s (d=500ms je kratšie))<br>2. {"a": "status"} ⏱ 1.0s (Po 4.5s má byť ešte ON)<br>3. {"a": "status"} ⏱ 1.0s (Po 4.5s má byť ešte ON)<br>4. {"a": "status"} (Po 5.5s má byť vypnuté)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>6.90s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_04</strong></td>
+                    <td>Viacnásobné predlžovanie - 3x príkaz po 1s</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (5 krokov):<br>1. {"a": "gate_ms", "g": "GATE4", "d": 2000} ⏱ 1.0s<br>2. {"a": "gate_ms", "g": "GATE4", "d": 2000} ⏱ 1.0s<br>3. {"a": "gate_ms", "g": "GATE4", "d": 2000} ⏱ 1.5s (Tretí príkaz - ešte 2s od teraz (bez odpovede))<br>4. {"a": "status"} ⏱ 1.0s (Po 3.5s má byť ešte ON)<br>5. {"a": "status"} (Po 4.5s má byť vypnuté)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>5.00s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_05</strong></td>
+                    <td>Okamžité vypnutie - príkaz d=0 počas behu</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (4 krokov):<br>1. {"a": "gate_ms", "g": "GATE1", "d": 10000} ⏱ 2.0s<br>2. {"a": "status"} ⏱ 0.5s<br>3. {"a": "gate_ms", "g": "GATE1", "d": "0"} ⏱ 0.5s (Okamžité vypnutie d=0 (ESP32 neodpovedá počas behu))<br>4. {"a": "status"} (Ihneď má byť vypnuté)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>3.40s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_06</strong></td>
+                    <td>min_d - krátky príkaz 500ms, min_d=3s → výsledok 3s</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (3 krokov):<br>1. {"a": "gate_ms", "g": "GATE2", "d": 500, "min_d": 3000} ⏱ 2.5s (Prvý príkaz s min_d=3s)<br>2. {"a": "status"} ⏱ 1.0s (Po 2.5s má byť ešte ON kvôli min_d=3s)<br>3. {"a": "status"} (Po 3.5s má byť vypnuté)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>3.80s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_07</strong></td>
+                    <td>Paralelné časovanie - GATE1 3s, GATE2 2s naraz</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (7 krokov):<br>1. {"a": "gate_ms", "g": "GATE1", "d": 0} ⏱ 0.1s (Vypnutie GATE1 pred testom)<br>2. {"a": "gate_ms", "g": "GATE2", "d": 0} ⏱ 0.1s (Vypnutie GATE2 pred testom)<br>3. {"a": "gate_ms", "g": "GATE1", "d": 3000} ⏱ 0.2s (Zapnutie GATE1 na 3s)<br>4. {"a": "gate_ms", "g": "GATE2", "d": 2000} ⏱ 1.5s<br>5. {"a": "status"} ⏱ 1.0s (Po 1.7s obe brány ešte ON)<br>6. {"a": "status"} ⏱ 0.5s (Po 2.7s GATE2 už OFF)<br>7. {"a": "status"} (Po 3.2s GATE1 už OFF)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>4.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Timing</span></td>
+                    <td><strong>TIMING_08</strong></td>
+                    <td>Stres test - 5x príkaz 1s v rýchlom slede</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (7 krokov):<br>1. {"a": "gate_ms", "g": "GATE3", "d": 1000} ⏱ 0.2s<br>2. {"a": "gate_ms", "g": "GATE3", "d": 1000} ⏱ 0.2s<br>3. {"a": "gate_ms", "g": "GATE3", "d": 1000} ⏱ 0.2s<br>4. {"a": "gate_ms", "g": "GATE3", "d": 1000} ⏱ 0.2s<br>5. {"a": "gate_ms", "g": "GATE3", "d": 1000} ⏱ 0.5s (Posledný príkaz - ešte 1s od teraz)<br>6. {"a": "status"} ⏱ 1.0s (Po 1.3s má byť ešte ON)<br>7. {"a": "status"} (Po 2.3s má byť vypnuté)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>3.00s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge ">MQTT Status</span></td>
+                    <td><strong>STATUS_01</strong></td>
+                    <td>Status obsahuje current_millis</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge ">MQTT Status</span></td>
+                    <td><strong>STATUS_02</strong></td>
+                    <td>Status obsahuje gate_off_time</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge ">MQTT Status</span></td>
+                    <td><strong>STATUS_03</strong></td>
+                    <td>gate_off_time obsahuje GATE1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge ">MQTT Status</span></td>
+                    <td><strong>STATUS_04</strong></td>
+                    <td>gate_off_time obsahuje GATE2</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge ">MQTT Status</span></td>
+                    <td><strong>STATUS_05</strong></td>
+                    <td>gate_off_time obsahuje GATE3</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge ">MQTT Status</span></td>
+                    <td><strong>STATUS_06</strong></td>
+                    <td>gate_off_time obsahuje GATE4</td>
+                    <td><code class="command" style="white-space: pre-wrap;">{'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Integrity</span></td>
+                    <td><strong>INTEGRITY_01</strong></td>
+                    <td>Vypnuté GATE má gate_off_time == -1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (3 krokov):<br>1. {"a": "gate_ms", "g": "GATE1", "d": 0} ⏱ 0.2s (Vypnutie GATE1)<br>2. {"a": "status"} ⏱ 0.2s (GATE1 má byť GATE_DOWN)<br>3. {"a": "status"} (GATE1 gate_off_time má byť -1)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.70s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Integrity</span></td>
+                    <td><strong>INTEGRITY_02</strong></td>
+                    <td>Nekonečne zapnuté GATE má gate_off_time == 0</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (4 krokov):<br>1. {"a": "gate_ms", "g": "GATE2", "d": 11111} ⏱ 0.5s (Zapnutie GATE2 na nekonečno)<br>2. {"a": "status"} ⏱ 0.2s (GATE2 má byť GATE_UP)<br>3. {"a": "status"} ⏱ 0.2s (GATE2 gate_off_time má byť 0 (nekonečno))<br>4. {"a": "gate_ms", "g": "GATE2", "d": 0} (Vypnutie GATE2)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>1.30s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Integrity</span></td>
+                    <td><strong>INTEGRITY_03</strong></td>
+                    <td>gate_off_time je správne vypočítané (current_millis + duration)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (3 krokov):<br>1. {"a": "gate_ms", "g": "GATE3", "d": 5000} ⏱ 0.3s (Zapnutie GATE3 na 5000ms)<br>2. {"a": "status"} ⏱ 0.2s (Kontrola: gate_off_time.GATE3 ≈ current_millis + 5000 (tolerance ±200ms))<br>3. {"a": "gate_ms", "g": "GATE3", "d": 0} (Vypnutie GATE3)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.80s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Integrity</span></td>
+                    <td><strong>INTEGRITY_04</strong></td>
+                    <td>Počas behu: gate_off_time > current_millis, po vypršaní: GATE_DOWN a -1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (4 krokov):<br>1. {"a": "gate_ms", "g": "GATE4", "d": 2000} ⏱ 0.5s (Zapnutie GATE4 na 2000ms)<br>2. {"a": "status"} ⏱ 2.0s (Kontrola: gate_off_time.GATE4 > current_millis (časovač beží))<br>3. {"a": "status"} ⏱ 0.2s (Po 2.5s: GATE4 má byť GATE_DOWN)<br>4. {"a": "status"} (Po vypnutí: gate_off_time.GATE4 má byť -1)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>3.10s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Integrity</span></td>
+                    <td><strong>INTEGRITY_05</strong></td>
+                    <td>Všetky brány súčasne - rôzne stavy</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (8 krokov):<br>1. {"a": "gate_ms", "g": "GATE1", "d": 0} ⏱ 0.1s (GATE1 vypnuté)<br>2. {"a": "gate_ms", "g": "GATE2", "d": 11111} ⏱ 0.1s (GATE2 nekonečne)<br>3. {"a": "gate_ms", "g": "GATE3", "d": 5000} ⏱ 0.1s (GATE3 na 5s)<br>4. {"a": "gate_ms", "g": "GATE4", "d": 3000} ⏱ 0.5s (GATE4 na 3s)<br>5. {"a": "status"} ⏱ 0.2s (Kontrola integrity všetkých brán)<br>6. {"a": "gate_ms", "g": "GATE2", "d": 0} ⏱ 0.1s (Vypnutie GATE2)<br>7. {"a": "gate_ms", "g": "GATE3", "d": 0} ⏱ 0.1s (Vypnutie GATE3)<br>8. {"a": "gate_ms", "g": "GATE4", "d": 0} (Vypnutie GATE4)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>2.00s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-timing">MQTT Integrity</span></td>
+                    <td><strong>INTEGRITY_06</strong></td>
+                    <td>Predlžovanie - gate_off_time sa správne aktualizuje</td>
+                    <td><code class="command" style="white-space: pre-wrap;">Multi-step (5 krokov):<br>1. {"a": "gate_ms", "g": "GATE1", "d": 3000} ⏱ 0.3s (Prvé zapnutie na 3s)<br>2. {"a": "status"} ⏱ 1.0s (Uloženie prvého gate_off_time)<br>3. {"a": "gate_ms", "g": "GATE1", "d": 5000} ⏱ 0.3s (Predĺženie na 5s od teraz)<br>4. {"a": "status"} ⏱ 0.2s (Kontrola: nový gate_off_time > starý gate_off_time)<br>5. {"a": "gate_ms", "g": "GATE1", "d": 0} (Vypnutie GATE1)</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>2.30s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP01</strong></td>
+                    <td>GET /getParams - získanie parametrov</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/getParams</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.06s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP02</strong></td>
+                    <td>GET /getParams - kontrola JSON kľúča getflash</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/getParams</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.07s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP03</strong></td>
+                    <td>GET /getParams - obsahuje eth-lilygo v odpovedi</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/getParams</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.07s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP10</strong></td>
+                    <td>GET /api - ping test</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "ping"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP11</strong></td>
+                    <td>GET /api - status</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "status"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.04s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP12</strong></td>
+                    <td>GET /api - help</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "help"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP13</strong></td>
+                    <td>GET /api - getflash</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "getflash"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP20</strong></td>
+                    <td>GET /api - zapnutie GATE1 na 3 sekundy</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "gate", "g": "4", "d": "3"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP21</strong></td>
+                    <td>GET /api - vypnutie GATE1</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "gate", "g": "4", "d": "0"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP22</strong></td>
+                    <td>GET /api - gate_ms test (3000ms)</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "gate_ms", "g": "4", "d": "3000"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP23</strong></td>
+                    <td>GET /api - gate_ms vypnutie</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "gate_ms", "g": "4", "d": "0"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP24</strong></td>
+                    <td>GET /api - neplatný GPIO pin</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api?request={"a": "gate", "g": "99", "d": "5"}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP30</strong></td>
+                    <td>POST /api - ping test</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'ping'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP31</strong></td>
+                    <td>POST /api - status</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'status'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.04s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP32</strong></td>
+                    <td>POST /api - zapnutie GATE2 na 5 sekúnd</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'gate', 'g': '12', 'd': '5'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP33</strong></td>
+                    <td>POST /api - vypnutie GATE2</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'gate', 'g': '12', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP34</strong></td>
+                    <td>POST /api - gate_ms s min_d</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'gate_ms', 'g': '4', 'd': '3000', 'min_d': '5000'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP35</strong></td>
+                    <td>POST /api - gate_ms vypnutie</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'gate_ms', 'g': '4', 'd': '0'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP36</strong></td>
+                    <td>POST /api - neplatný príkaz</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'neexistujuci_prikaz'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP37</strong></td>
+                    <td>POST /api - help príkaz</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: {'a': 'help'}</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP40</strong></td>
+                    <td>GET /api - chýbajúci parameter request</td>
+                    <td><code class="command" style="white-space: pre-wrap;">GET http://192.168.18.50:9090/api</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.01s</td>
+                </tr>
+
+                <tr class="test-passed">
+                    <td><span class="source-badge source-http">HTTP</span></td>
+                    <td><strong>HTTP41</strong></td>
+                    <td>POST /api - neplatný JSON</td>
+                    <td><code class="command" style="white-space: pre-wrap;">POST http://192.168.18.50:9090/api | Data: toto nie je JSON</code></td>
+                    <td class="passed"><strong>✓ PASSED</strong>
+                        
+                    </td>
+                    <td>0.02s</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

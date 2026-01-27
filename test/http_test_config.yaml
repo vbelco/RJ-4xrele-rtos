@@ -1,0 +1,251 @@
+# Konfigurácia HTTP API pripojenia
+# Poznámka: Host, port a timeout sa načítavajú z .env súboru (HTTP_BASE_URL, HTTP_TIMEOUT)
+# Tu môžeš nastavenia prepísať ak chceš použiť iné hodnoty pre tieto testy
+http: {}
+  # host: "192.168.1.189"  # Odkomentuj ak chceš prepísať HTTP_BASE_URL z .env
+  # port: 80               # Odkomentuj ak chceš použiť iný port
+  # timeout: 5             # Odkomentuj ak chceš prepísať HTTP_TIMEOUT z .env
+
+# HTTP API testovacie prípady
+tests:
+  # ========== ZÁKLADNÉ ENDPOINTY ==========
+  
+  - id: HTTP01
+    name: "GET /getParams - získanie parametrov"
+    method: GET
+    endpoint: "/getParams"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP02
+    name: "GET /getParams - kontrola JSON kľúča getflash"
+    method: GET
+    endpoint: "/getParams"
+    expected: "getflash"
+    expected_type: "json_key"
+    
+  - id: HTTP03
+    name: "GET /getParams - obsahuje eth-lilygo v odpovedi"
+    method: GET
+    endpoint: "/getParams"
+    expected: "eth-lilygo"
+    expected_type: "contains"
+
+  # ========== /api GET ENDPOINT TESTY ==========
+  
+  - id: HTTP10
+    name: "GET /api - ping test"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "ping"
+    expected: "result"
+    expected_type: "json_key"
+    
+  - id: HTTP11
+    name: "GET /api - status"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "status"
+    expected: "result"
+    expected_type: "json_key"
+    
+  - id: HTTP12
+    name: "GET /api - help"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "help"
+    expected: "result"
+    expected_type: "json_key"
+    
+  - id: HTTP13
+    name: "GET /api - getflash"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "getflash"
+    expected: "result"
+    expected_type: "json_key"
+
+  # ========== /api GET - GATE TESTY ==========
+  
+  - id: HTTP20
+    name: "GET /api - zapnutie GATE1 na 3 sekundy"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "gate"
+      g: "4"
+      d: "3"
+    expected: 200
+    expected_type: "status_code"
+    wait_after: 1
+    
+  - id: HTTP21
+    name: "GET /api - vypnutie GATE1"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "gate"
+      g: "4"
+      d: "0"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP22
+    name: "GET /api - gate_ms test (3000ms)"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "gate_ms"
+      g: "4"
+      d: "3000"
+    expected: 200
+    expected_type: "status_code"
+    wait_after: 1
+    
+  - id: HTTP23
+    name: "GET /api - gate_ms vypnutie"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "gate_ms"
+      g: "4"
+      d: "0"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP24
+    name: "GET /api - neplatný GPIO pin"
+    method: GET
+    endpoint: "/api"
+    data:
+      a: "gate"
+      g: "99"
+      d: "5"
+    expected: "Invalid GPIO pin"
+    expected_type: "contains"
+
+  # ========== /api POST ENDPOINT TESTY ==========
+  
+  - id: HTTP30
+    name: "POST /api - ping test"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "ping"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP31
+    name: "POST /api - status"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "status"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP32
+    name: "POST /api - zapnutie GATE2 na 5 sekúnd"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "gate"
+      g: "12"
+      d: "5"
+    expected: 200
+    expected_type: "status_code"
+    wait_after: 1
+    
+  - id: HTTP33
+    name: "POST /api - vypnutie GATE2"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "gate"
+      g: "12"
+      d: "0"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP34
+    name: "POST /api - gate_ms s min_d"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "gate_ms"
+      g: "4"
+      d: "3000"
+      min_d: "5000"
+    expected: 200
+    expected_type: "status_code"
+    wait_after: 2
+    
+  - id: HTTP35
+    name: "POST /api - gate_ms vypnutie"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "gate_ms"
+      g: "4"
+      d: "0"
+    expected: 200
+    expected_type: "status_code"
+    
+  - id: HTTP36
+    name: "POST /api - neplatný príkaz"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "neexistujuci_prikaz"
+    expected: "unknown request"
+    expected_type: "contains"
+    
+  - id: HTTP37
+    name: "POST /api - help príkaz"
+    method: POST
+    endpoint: "/api"
+    data:
+      a: "help"
+    expected: "help"
+    expected_type: "contains"
+
+  # ========== CHYBOVÉ STAVY ==========
+  
+  - id: HTTP40
+    name: "GET /api - chýbajúci parameter request"
+    method: GET
+    endpoint: "/api"
+    expected: 400
+    expected_type: "status_code"
+    
+  - id: HTTP41
+    name: "POST /api - neplatný JSON"
+    method: POST
+    endpoint: "/api"
+    data: "toto nie je JSON"
+    expected: 400
+    expected_type: "status_code"
+
+  # ========== /setParams TESTY (VYPNUTÉ DEFAULTNE) ==========
+  
+  - id: HTTP50
+    name: "GET /setParams - test (VYPNUTÉ - mení nastavenia!)"
+    enabled: false
+    method: GET
+    endpoint: "/setParams"
+    params:
+      params: '{"mqtt_port":"8883"}'
+    expected: 200
+    expected_type: "status_code"
+
+# Nastavenia behu testov
+test_execution:
+  stop_on_fail: false  # pokračuj aj po zlyhaní testu
+  delay_between_tests: 0.3  # sekúnd medzi testami
+  verbose: true  # detailný výpis
+  save_report: true  # ulož report do súboru
+  report_format: "html"  # "html" alebo "json"

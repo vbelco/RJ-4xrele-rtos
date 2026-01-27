@@ -1,0 +1,50 @@
+# Test pre overenie current_millis a gate_off_time v status odpovedi
+# Konfigurácia MQTT sa načítava z .env súboru
+mqtt: {}
+
+test_execution:
+  verbose: true
+  save_report: true
+
+tests:
+  - id: STATUS_01
+    name: "Status obsahuje current_millis"
+    command:
+      a: "status"
+    expected: "current_millis"
+    expected_type: "contains"
+  
+  - id: STATUS_02
+    name: "Status obsahuje gate_off_time"
+    command:
+      a: "status"
+    expected: "gate_off_time"
+    expected_type: "contains"
+  
+  - id: STATUS_03
+    name: "gate_off_time obsahuje GATE1"
+    command:
+      a: "status"
+    expected: "GATE1"
+    expected_type: "contains"
+  
+  - id: STATUS_04
+    name: "gate_off_time obsahuje GATE2"
+    command:
+      a: "status"
+    expected: "GATE2"
+    expected_type: "contains"
+  
+  - id: STATUS_05
+    name: "gate_off_time obsahuje GATE3"
+    command:
+      a: "status"
+    expected: "GATE3"
+    expected_type: "contains"
+  
+  - id: STATUS_06
+    name: "gate_off_time obsahuje GATE4"
+    command:
+      a: "status"
+    expected: "GATE4"
+    expected_type: "contains"

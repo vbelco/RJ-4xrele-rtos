@@ -1,0 +1,251 @@
+# ========================================
+# STATUS INTEGRITY TESTS
+# ========================================
+# Testovanie konzistencie hodnôt v STATUS odpovedi:
+# - gate_off_time == -1 keď GATE_DOWN
+# - gate_off_time == 0 keď GATE_UP nekonečne
+# - gate_off_time > current_millis keď GATE_UP s časovačom
+# - gate_off_time ≈ current_millis + duration (s toleranciou)
+
+mqtt:
+  timeout: 10
+
+test_execution:
+  verbose: true
+  save_report: true
+
+# Multi-step testy s kontrolou integrity
+tests:
+  # ========== TEST 1: Integrita pri vypnutých portoch ==========
+  - id: INTEGRITY_01
+    name: "Vypnuté GATE má gate_off_time == -1"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 0
+        note: "Vypnutie GATE1"
+        wait_after: 0.2
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE1"
+          value: "GATE_DOWN"
+        note: "GATE1 má byť GATE_DOWN"
+        wait_after: 0.2
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_off_time.GATE1"
+          value: -1
+        note: "GATE1 gate_off_time má byť -1"
+
+  # ========== TEST 2: Integrita pri nekonečnom zapnutí ==========
+  - id: INTEGRITY_02
+    name: "Nekonečne zapnuté GATE má gate_off_time == 0"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 11111
+        expected_response:
+          type: "contains"
+          value: "relayONendless"
+        note: "Zapnutie GATE2 na nekonečno"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE2"
+          value: "GATE_UP"
+        note: "GATE2 má byť GATE_UP"
+        wait_after: 0.2
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_off_time.GATE2"
+          value: 0
+        note: "GATE2 gate_off_time má byť 0 (nekonečno)"
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 0
+        note: "Vypnutie GATE2"
+
+  # ========== TEST 3: Kontrola hodnoty gate_off_time po zapnutí ==========
+  - id: INTEGRITY_03
+    name: "gate_off_time je správne vypočítané (current_millis + duration)"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 5000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        note: "Zapnutie GATE3 na 5000ms"
+        wait_after: 0.3
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "custom"
+          validator: "check_gate_off_time_calculation"
+        note: "Kontrola: gate_off_time.GATE3 ≈ current_millis + 5000 (tolerance ±200ms)"
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 0
+        note: "Vypnutie GATE3"
+
+  # ========== TEST 4: Konzistencia počas behu časovača ==========
+  - id: INTEGRITY_04
+    name: "Počas behu: gate_off_time > current_millis, po vypršaní: GATE_DOWN a -1"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE4"
+          d: 2000
+        expected_response:
+          type: "contains"
+          value: "relayON"
+        note: "Zapnutie GATE4 na 2000ms"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "custom"
+          validator: "check_gate_off_time_greater"
+        note: "Kontrola: gate_off_time.GATE4 > current_millis (časovač beží)"
+        wait_after: 2.0
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_status.GATE4"
+          value: "GATE_DOWN"
+        note: "Po 2.5s: GATE4 má byť GATE_DOWN"
+        wait_after: 0.2
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "json_path"
+          path: "gate_off_time.GATE4"
+          value: -1
+        note: "Po vypnutí: gate_off_time.GATE4 má byť -1"
+
+  # ========== TEST 5: Integrita všetkých brán naraz ==========
+  - id: INTEGRITY_05
+    name: "Všetky brány súčasne - rôzne stavy"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 0
+        note: "GATE1 vypnuté"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 11111
+        note: "GATE2 nekonečne"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 5000
+        note: "GATE3 na 5s"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE4"
+          d: 3000
+        note: "GATE4 na 3s"
+        wait_after: 0.5
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "custom"
+          validator: "check_all_gates_integrity"
+        note: "Kontrola integrity všetkých brán"
+        wait_after: 0.2
+      
+      # Cleanup
+      - command:
+          a: "gate_ms"
+          g: "GATE2"
+          d: 0
+        note: "Vypnutie GATE2"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE3"
+          d: 0
+        note: "Vypnutie GATE3"
+        wait_after: 0.1
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE4"
+          d: 0
+        note: "Vypnutie GATE4"
+
+  # ========== TEST 6: Predlžovanie - kontrola preratania času ==========
+  - id: INTEGRITY_06
+    name: "Predlžovanie - gate_off_time sa správne aktualizuje"
+    steps:
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 3000
+        note: "Prvé zapnutie na 3s"
+        wait_after: 0.3
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "custom"
+          validator: "save_gate_off_time_1"
+        note: "Uloženie prvého gate_off_time"
+        wait_after: 1.0
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 5000
+        note: "Predĺženie na 5s od teraz"
+        wait_after: 0.3
+      
+      - command:
+          a: "status"
+        expected_response:
+          type: "custom"
+          validator: "check_gate_off_time_updated"
+        note: "Kontrola: nový gate_off_time > starý gate_off_time"
+        wait_after: 0.2
+      
+      - command:
+          a: "gate_ms"
+          g: "GATE1"
+          d: 0
+        note: "Vypnutie GATE1"

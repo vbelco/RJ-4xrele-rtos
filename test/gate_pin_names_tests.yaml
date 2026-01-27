@@ -1,0 +1,284 @@
+# Testovanie textových názvov pinov pre gate príkazy
+# Testy pre podporu GATE1, GATE2, GATE3, GATE4
+
+# Konfigurácia MQTT pripojenia
+# Načítava sa z .env súboru - tu môžeš prepísať jednotlivé hodnoty
+mqtt: {}
+
+test_execution:
+  verbose: true
+  stop_on_error: false
+  delay_between_tests: 0.5
+
+tests:
+  # ========== GATE - TEXTOVÉ NÁZVY PINOV ==========
+  - id: GATE_NAME_01
+    name: "Gate GATE1 - zapnutie pomocou textového názvu"
+    command:
+      a: "gate"
+      g: "GATE1"
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_NAME_02
+    name: "Gate GATE2 - zapnutie pomocou textového názvu"
+    command:
+      a: "gate"
+      g: "GATE2"
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_NAME_03
+    name: "Gate GATE3 - zapnutie pomocou textového názvu"
+    command:
+      a: "gate"
+      g: "GATE3"
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_NAME_04
+    name: "Gate GATE4 - zapnutie pomocou textového názvu"
+    command:
+      a: "gate"
+      g: "GATE4"
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_NAME_05
+    name: "Gate GATE1 - vypnutie pomocou textového názvu"
+    command:
+      a: "gate"
+      g: "GATE1"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 0.5
+
+  # ========== GATE_MS - TEXTOVÉ NÁZVY PINOV ==========
+  - id: GATE_MS_NAME_01
+    name: "Gate_ms GATE1 - zapnutie pomocou textového názvu (ms)"
+    command:
+      a: "gate_ms"
+      g: "GATE1"
+      d: "3000"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_MS_NAME_02
+    name: "Gate_ms GATE2 - zapnutie pomocou textového názvu (ms)"
+    command:
+      a: "gate_ms"
+      g: "GATE2"
+      d: "3000"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_MS_NAME_03
+    name: "Gate_ms GATE3 - vypnutie pomocou textového názvu"
+    command:
+      a: "gate_ms"
+      g: "GATE3"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 0.5
+
+  # ========== BACKWARDS COMPATIBILITY - ČÍSELNÉ PINY ==========
+  - id: GATE_NUM_01
+    name: "Gate - zapnutie pomocou číselného pinu (GATE1=4)"
+    command:
+      a: "gate"
+      g: 4
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_NUM_02
+    name: "Gate - zapnutie pomocou číselného pinu (GATE2=12)"
+    command:
+      a: "gate"
+      g: 12
+      d: "5"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+    
+  - id: GATE_NUM_03
+    name: "Gate - vypnutie pomocou číselného pinu"
+    command:
+      a: "gate"
+      g: 4
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 0.5
+    
+  - id: GATE_MS_NUM_01
+    name: "Gate_ms - zapnutie pomocou číselného pinu (ms)"
+    command:
+      a: "gate_ms"
+      g: 15
+      d: "2000"
+    expected_type: "contains"
+    expected: "gate"
+    wait_after: 0.5
+
+  # ========== NEPLATNÉ NÁZVY PINOV ==========
+  - id: GATE_INVALID_01
+    name: "Gate - neplatný textový názov GATE5"
+    command:
+      a: "gate"
+      g: "GATE5"
+      d: "5"
+    expected_type: "contains"
+    expected: "Invalid GPIO pin"
+    wait_after: 0.5
+    
+  - id: GATE_INVALID_02
+    name: "Gate - neplatný textový názov RELAY1"
+    command:
+      a: "gate"
+      g: "RELAY1"
+      d: "5"
+    expected_type: "contains"
+    expected: "Invalid GPIO pin"
+    wait_after: 0.5
+    
+  - id: GATE_INVALID_03
+    name: "Gate - náhodný text"
+    command:
+      a: "gate"
+      g: "random_text"
+      d: "5"
+    expected_type: "contains"
+    expected: "Invalid GPIO pin"
+    wait_after: 0.5
+    
+  - id: GATE_INVALID_04
+    name: "Gate - neplatné číselné pin 99"
+    command:
+      a: "gate"
+      g: 99
+      d: "5"
+    expected_type: "contains"
+    expected: "Invalid GPIO pin"
+    wait_after: 0.5
+    
+  - id: GATE_MS_INVALID_01
+    name: "Gate_ms - neplatný názov pinu"
+    command:
+      a: "gate_ms"
+      g: "INVALID"
+      d: "1000"
+    expected_type: "contains"
+    expected: "Invalid GPIO pin"
+    wait_after: 0.5
+
+  # ========== KOMBINOVANÉ TESTY S RID ==========
+  - id: GATE_RID_01
+    name: "Gate GATE1 s RID - textový názov"
+    command:
+      a: "gate"
+      g: "GATE1"
+      d: "5"
+      rid: "test-rid-001"
+    expected_type: "contains"
+    expected: "test-rid-001"
+    wait_after: 0.5
+    
+  - id: GATE_RID_02
+    name: "Gate číselný pin s RID"
+    command:
+      a: "gate"
+      g: 4
+      d: "5"
+      rid: "test-rid-002"
+    expected_type: "contains"
+    expected: "test-rid-002"
+    wait_after: 0.5
+    
+  - id: GATE_MS_RID_01
+    name: "Gate_ms GATE2 s RID"
+    command:
+      a: "gate_ms"
+      g: "GATE2"
+      d: "3000"
+      rid: "u876sgx57sg"
+    expected_type: "contains"
+    expected: "u876sgx57sg"
+    wait_after: 0.5
+    
+  - id: GATE_INVALID_RID_01
+    name: "Neplatný pin s RID - kontrola formátu odpovede"
+    command:
+      a: "gate"
+      g: "INVALID_GATE"
+      d: "5"
+      rid: "error-test-001"
+    expected_type: "regex"
+    expected: '.*"result".*"Invalid GPIO pin".*"rid".*"error-test-001".*'
+    wait_after: 0.5
+
+  # ========== STRESS TESTY ==========
+  # Najprv vypneme všetko aby sme mali známy stav
+  - id: GATE_STRESS_00
+    name: "Príprava - vypnutie všetkých pred stress testami"
+    command:
+      a: "gate"
+      g: 4
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 0.5
+    
+  - id: GATE_STRESS_01
+    name: "Rýchle prepínanie medzi textovými názvami"
+    command:
+      a: "gate"
+      g: "GATE1"
+      d: "5"
+    expected_type: "contains"
+    expected: "4"  # Pin 4 = GATE1
+    wait_after: 0.2
+    
+  - id: GATE_STRESS_02
+    name: "Rýchle prepínanie - GATE2"
+    command:
+      a: "gate"
+      g: "GATE2"
+      d: "5"
+    expected_type: "contains"
+    expected: "12"
+    wait_after: 0.2
+    
+  - id: GATE_STRESS_03
+    name: "Rýchle prepínanie - číselný pin"
+    command:
+      a: "gate"
+      g: 15
+      d: "5"
+    expected_type: "contains"
+    expected: "15"
+    wait_after: 0.2
+    
+  - id: GATE_STRESS_04
+    name: "Vypnutie všetkých"
+    command:
+      a: "gate"
+      g: "GATE1"
+      d: "0"
+    expected_type: "exact"
+    expected: ""
+    wait_after: 0.5
+

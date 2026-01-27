@@ -1,0 +1,16 @@
+# Simple timing test pre debugging
+# Konfigurácia MQTT sa načítava z .env súboru
+mqtt:
+  timeout: 10  # Dlhší timeout pre testy
+
+test_execution:
+  verbose: true
+  save_report: false
+
+tests:
+  - id: SIMPLE_01
+    name: "Jednoduchý ping test"
+    command:
+      a: "ping"
+    expected: "pingOK"
+    expected_type: "exact"
