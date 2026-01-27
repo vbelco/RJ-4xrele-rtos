@@ -20,7 +20,8 @@ Riadiaca jednotka v1.1 je zariadenie určené na ovládanie 4 relé prostredníc
   - POE: 37-57V DC vstup
   - Výstup: 5V/2.4A
 - **GPIO piny:** Prístupné cez konektory
-- **USB:** Type-C pre programovanie
+- **USB:** Len na napájanie
+- **Programovanie** Cez externý programátor
 
 **Užitočné linky:**
 - [Oficiálna stránka produktu](https://lilygo.cc/products/t-internet-poe)

@@ -14,7 +14,7 @@ unsigned int is_mqtt_allowed = 0; //priznak, ci je realizovane pripojenie cez mq
 
 //zakladna vlastna identifikacia
 String my_hostname = "eth-lilygo";
-String version   = "3.4.0"; //verzia jadra 3.3.5
+String version   = "4.0.0"; //verzia jadra 3.3.5
 String uuid = ""; //ak je prazdna vygeneruje sa a ulozi sa do Flash, tato sa neda nastavit cez preferences ani tam nieje ulozena!
 
 //Ak IP adresa je myIPAddress(0, 0, 0, 0) bude nahradena pridelenou zo siete inac ip adresa bude zadana statisky. Ostatne parametre budu z dhcp 
@@ -26,7 +26,7 @@ IPAddress mySubnet(255, 255, 255, 0);    // Maska podsiete
 IPAddress myPrimaryDNS(8, 8, 8, 8);      // Primárny DNS (napr. Google DNS)
 IPAddress mySecondaryDNS(1, 1, 1, 1);    // Sekundárny DNS (voliteľné)
 
-String nazov_clienta = "system/vbelco/eth-liligo1"; /* identifikacia clienta do sluzby mqtt  */
+String nazov_clienta = "system/vbelco/eth-liligo2"; /* identifikacia clienta do sluzby mqtt  */
 String nazov_prijimacieho_kanala = nazov_clienta; /*nazov kanala na ktorom budeme pocuvat*/
 String nazov_odosielacieho_kanala = "res/"+nazov_clienta; //*nazov kanala do ktoreho odpovedame*/
 String nazov_lwt = "lwt"; /*nazov kanala kde sa posiela last will sprava*/

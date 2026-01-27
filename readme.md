@@ -49,7 +49,7 @@ RGB LED ovládaná z ESP32 riadiacim signálom. Zobrazuje nasledujúce stavy zar
 
 ### 🚀 Prehľad
 
-Od verzie **v1.1-rtos** používa zariadenie **FreeRTOS** (Real-Time Operating System) pre efektívnejšie spracovanie úloh na oboch jadrách ESP32.
+Od verzie **4.4.0** používa zariadenie **FreeRTOS** (Real-Time Operating System) pre efektívnejšie spracovanie úloh na oboch jadrách ESP32.
 
 ### 📐 Architektúra systému
 
