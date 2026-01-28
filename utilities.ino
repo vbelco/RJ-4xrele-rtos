@@ -1,4 +1,52 @@
 /**
+ * fcia na poskytovanie informacii LEN o branach (gate_status)
+ */
+String get_gate_status(){
+
+  StaticJsonDocument<512> doc;
+  doc["current_millis"]  = currentMillis;
+
+  JsonObject gateStatus = doc.createNestedObject("gate_status");
+  for (const auto& [pin, _] : koniec) {
+    const char* stav = (digitalRead(pin) == GATE_UP) ? "GATE_UP" : "GATE_DOWN";
+    
+    // Použiť textový názov namiesto čísla pinu
+    String gateName;
+    switch (pin) {
+      case GATE1: gateName = "GATE1"; break;
+      case GATE2: gateName = "GATE2"; break;
+      case GATE3: gateName = "GATE3"; break;
+      case GATE4: gateName = "GATE4"; break;
+      default: gateName = String(pin); break; // Fallback pre neznáme piny
+    }
+    
+    gateStatus[gateName] = stav;
+  }
+
+  JsonObject gateOffTime = doc.createNestedObject("gate_off_time");
+  for (const auto& [pin, offTime] : koniec) {
+    // Použiť textový názov namiesto čísla pinu
+    String gateName;
+    switch (pin) {
+      case GATE1: gateName = "GATE1"; break;
+      case GATE2: gateName = "GATE2"; break;
+      case GATE3: gateName = "GATE3"; break;
+      case GATE4: gateName = "GATE4"; break;
+      default: gateName = String(pin); break; // Fallback pre neznáme piny
+    }
+    
+    gateOffTime[gateName] = offTime;
+  }
+
+  String output;
+  serializeJson(doc, output);
+  if (verbose) {
+    Serial.println(output);
+  }
+  return output;
+}
+
+/**
  * fcia na poskytovanie informacii
  */
 String get_info(){
@@ -45,8 +93,10 @@ String get_info(){
   }
 
   String output;
-  serializeJsonPretty(doc, output);
-  Serial.println(output);
+  serializeJson(doc, output);
+  if (verbose) {
+    Serial.println(output);
+  }
   return output;
 }
 
@@ -102,6 +152,7 @@ void proceess_preferences(){
     is_mqtt_allowed = preferences.getUInt("is_mqtt_allowed", is_mqtt_allowed);
     nazov_clienta = preferences.getString("nazov_clienta", nazov_clienta);
     useDHCP = preferences.getBool("useDHCP", useDHCP);
+    verbose = preferences.getBool("verbose", verbose);
     
     // Načítanie IP adries zo stringu
     String ipStr = preferences.getString("myIPAddress", "");
@@ -123,6 +174,7 @@ void proceess_preferences(){
     Serial.printf("Load from flash is_mqtt_allowed => %d \n", is_mqtt_allowed);
     Serial.printf("Load from flash nazov_clienta => %s \n", nazov_clienta.c_str() );
     Serial.printf("Load from flash useDHCP => %d \n", useDHCP);
+    Serial.printf("Load from flash verbose => %d \n", verbose);
     Serial.printf("Load from flash myIPAddress => %s \n", myIPAddress.toString().c_str());
     Serial.printf("Load from flash myGateway => %s \n", myGateway.toString().c_str());
     Serial.printf("Load from flash mySubnet => %s \n", mySubnet.toString().c_str());
@@ -271,6 +323,10 @@ void nastav_globalnu_premennu(String paramName, String paramValue){
     nazov_clienta = paramValue;  // Zmena hodnoty globálnej premennej
     Serial.println("Aktualizovana globalna hodnota: nazov_clienta: " + nazov_clienta);
 
+  } else if (paramName == "verbose") {
+    verbose = (paramValue == "1" || paramValue == "true");  // Konverzia String -> bool
+    Serial.printf("verbose úspesne nastavená: %s \n", verbose ? "true" : "false" );
+
   }
 
 }
@@ -295,9 +351,10 @@ String buildJsonConfig() {
   { JsonObject doc = getflash.createNestedObject();  doc["myPrimaryDNS"] = myPrimaryDNS.toString();  }
   { JsonObject doc = getflash.createNestedObject();  doc["mySecondaryDNS"] = mySecondaryDNS.toString();  }
   { JsonObject doc = getflash.createNestedObject();  doc["useDHCP"] = useDHCP ? "1" : "0";  }
+  { JsonObject doc = getflash.createNestedObject();  doc["verbose"] = verbose ? "1" : "0";  }
 
   // Konvertovanie JSON do String
   String json_output;
-  serializeJsonPretty(getflash_doc, json_output); //formatujeme s odrazkami
+  serializeJson(getflash_doc, json_output);
   return json_output;
 }

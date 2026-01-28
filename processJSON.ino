@@ -186,6 +186,15 @@ String handleJson(DynamicJsonDocument& doc, const String& request_from) {
   }
 
   /**
+   *  poziadavka na ziskanie LEN stavov bran (gate_status)
+   * {  "a":"gate_status" }
+   */
+  else if (strcmp(action, "gate_status") == 0) {
+    String gateStatusResult = get_gate_status();
+    return rid.length() > 0 ? "{\"result\":" + gateStatusResult + ",\"rid\":\"" + rid + "\"}" : gateStatusResult;
+  }
+
+  /**
    *  poziadavka na nastavenie parametrov flash pamate
    * {  "a":"setflash", "premenna": "hodnota" }
    */
@@ -248,6 +257,32 @@ String handleJson(DynamicJsonDocument& doc, const String& request_from) {
       return rid.length() > 0 ? "{\"result\":\"Chybajuce, alebo neplatne parametre pre OTA\",\"rid\":\"" + rid + "\"}" : "Chybajuce, alebo neplatne parametre pre OTA";
     }
     
+  }
+  
+  /**
+   *  zapnutie verbose mode (debug výpisy)
+   * {  "a":"verbose_on" }
+   */
+  else if (strcmp(action, "verbose_on") == 0) {
+    verbose = true;
+    preferences.begin("nastavenia");
+    preferences.putBool("verbose", verbose);
+    preferences.end();
+    Serial.println("Verbose mode ENABLED");
+    return rid.length() > 0 ? "{\"result\":\"verbose enabled\",\"rid\":\"" + rid + "\"}" : "verbose enabled";
+  }
+  
+  /**
+   *  vypnutie verbose mode (debug výpisy)
+   * {  "a":"verbose_off" }
+   */
+  else if (strcmp(action, "verbose_off") == 0) {
+    verbose = false;
+    preferences.begin("nastavenia");
+    preferences.putBool("verbose", verbose);
+    preferences.end();
+    Serial.println("Verbose mode DISABLED");
+    return rid.length() > 0 ? "{\"result\":\"verbose disabled\",\"rid\":\"" + rid + "\"}" : "verbose disabled";
   }
   
   /**
@@ -523,11 +558,30 @@ String send_help(){
     c.createNestedObject("example")["a"]="status";
   }
 
-  Serial.printf("Serializovanie: \n");
+  // gate_status
+  { JsonObject c = help.createNestedObject();
+    c["action"]="gate_status"; c["description"]="Stavy brán GATE1-GATE4 (current_millis, gate_status, gate_off_time)";
+    c.createNestedObject("example")["a"]="gate_status";
+  }
+
+  // verbose_on
+  { JsonObject c = help.createNestedObject();
+    c["action"]="verbose_on"; c["description"]="Zapnutie debug výpisov (verbose mode)";
+    c.createNestedObject("example")["a"]="verbose_on";
+  }
+
+  // verbose_off
+  { JsonObject c = help.createNestedObject();
+    c["action"]="verbose_off"; c["description"]="Vypnutie debug výpisov (verbose mode)";
+    c.createNestedObject("example")["a"]="verbose_off";
+  }
+
+  if (verbose) {
+    Serial.printf("Serializovanie: \n");
+  }
   // Konvertovanie JSON do String
   String payload;
-  //serializeJson(doc, payload); //serializovanie
-  serializeJsonPretty(doc, payload); //formatujeme s odrazkami
+  serializeJson(doc, payload);
   return payload;
 
 }

@@ -1,0 +1,196 @@
+# ====================================
+# ESP32 STRESS TESTY - Konfigurácia
+# ====================================
+# Testy na rýchle sekvenčné volania a paralelné volania cez MQTT a HTTP API
+# 
+# POZNÁMKA: HTTP API URL (device_ip, device_port) a MQTT konfigurácia
+# sa načítavajú z .env súboru
+
+# ====================================
+# RAPID SEQUENTIAL TESTS (rýchle sekvenčné príkazy)
+# ====================================
+rapid_sequential_tests:
+  - id: RAPID_01
+    name: "Rapid MQTT mixed commands (10x - status/ping/getflash)"
+    enabled: true
+    protocol: mqtt
+    commands:
+      - {"a": "status"}
+      - {"a": "ping"}
+      - {"a": "getflash"}
+      - {"a": "status"}
+      - {"a": "ping"}
+    repeat: 2  # 2x opakuj 5 príkazov = 10 príkazov
+    delay_between_ms: 500  # 500ms medzi príkazmi
+    expected_response_count: 10
+    max_duration_ms: 8000  # Maximálne 8s na všetky odpovede
+
+  - id: RAPID_02
+    name: "Rapid MQTT gate commands (20x GATE1 on/off)"
+    enabled: true
+    protocol: mqtt
+    commands:
+      - {"a": "gate", "gate": "GATE1", "s": 1}
+      - {"a": "gate", "gate": "GATE1", "s": 0}
+    repeat: 10  # 10x opakuj oba príkazy = 20 príkazov
+    delay_between_ms: 300
+    expected_response_count: 20
+    max_duration_ms: 8000
+
+  - id: RAPID_03
+    name: "Rapid HTTP mixed requests (10x - status/ping/getflash)"
+    enabled: true
+    protocol: http
+    endpoints:
+      - "/api?request={\"a\":\"status\"}"
+      - "/api?request={\"a\":\"ping\"}"
+      - "/api?request={\"a\":\"getflash\"}"
+      - "/api?request={\"a\":\"status\"}"
+      - "/api?request={\"a\":\"ping\"}"
+    method: GET
+    repeat: 2  # 2x opakuj 5 endpointov = 10 requestov
+    delay_between_ms: 500  # 500ms medzi príkazmi
+    expected_success_count: 10
+    max_duration_ms: 8000
+
+  - id: RAPID_04
+    name: "Rapid HTTP gate commands (20x GATE2 on/off)"
+    enabled: true
+    protocol: http
+    endpoints:
+      - "/api?request={\"a\":\"gate\",\"g\":\"GATE2\",\"d\":\"5\"}"
+      - "/api?request={\"a\":\"gate\",\"g\":\"GATE2\",\"d\":\"0\"}"
+    method: GET
+    repeat: 10
+    delay_between_ms: 300
+    expected_success_count: 20
+    max_duration_ms: 8000
+
+  - id: RAPID_05
+    name: "Mixed rapid commands (status + getflash)"
+    enabled: true
+    protocol: mqtt
+    commands:
+      - {"a": "status"}
+      - {"a": "getflash"}
+    repeat: 5  # 5x každý príkaz = 10 príkazov
+    delay_between_ms: 250
+    expected_response_count: 10
+    max_duration_ms: 5000
+
+# ====================================
+# PARALLEL TESTS (súčasné MQTT + HTTP volania)
+# ====================================
+parallel_tests:
+  - id: PARALLEL_01
+    name: "Parallel status (MQTT + HTTP simultaneous)"
+    enabled: true
+    mqtt_command: {"a": "status"}
+    http_endpoint: "/api?request={\"a\":\"status\"}"
+    http_method: GET
+    simultaneous_count: 5  # 5x súčasne zavolaj obidva protokoly
+    delay_between_rounds_ms: 400
+    expected_mqtt_responses: 5
+    expected_http_success: 5
+    max_duration_ms: 8000
+
+  - id: PARALLEL_02
+    name: "Parallel gate control (MQTT GATE1, HTTP GATE2)"
+    enabled: true
+    mqtt_commands:
+      - {"a": "gate", "gate": "GATE1", "s": 1}
+      - {"a": "gate", "gate": "GATE1", "s": 0}
+    http_endpoints:
+      - "/api?request={\"a\":\"gate\",\"g\":\"GATE2\",\"d\":\"5\"}"
+      - "/api?request={\"a\":\"gate\",\"g\":\"GATE2\",\"d\":\"0\"}"
+    http_method: GET
+    repeat: 3  # 3x opakuj celú sekvenciu = 6 MQTT + 6 HTTP príkazov
+    delay_between_rounds_ms: 500
+    expected_mqtt_responses: 6
+    expected_http_success: 6
+    max_duration_ms: 8000
+
+  - id: PARALLEL_03
+    name: "Parallel getflash (MQTT) + status (HTTP)"
+    enabled: true
+    mqtt_command: {"a": "getflash"}
+    http_endpoint: "/api?request={\"a\":\"status\"}"
+    http_method: GET
+    simultaneous_count: 3
+    delay_between_rounds_ms: 300
+    expected_mqtt_responses: 3
+    expected_http_success: 3
+    max_duration_ms: 4000
+
+  - id: PARALLEL_04
+    name: "Heavy parallel load (10x simultaneous)"
+    enabled: true
+    mqtt_command: {"a": "status"}
+    http_endpoint: "/api?request={\"a\":\"status\"}"
+    http_method: GET
+    simultaneous_count: 10  # 10 MQTT + 10 HTTP súčasne
+    delay_between_rounds_ms: 400
+    expected_mqtt_responses: 10
+    expected_http_success: 10
+    max_duration_ms: 12000
+
+  - id: PARALLEL_05
+    name: "Mixed parallel (status + gates + getflash)"
+    enabled: true
+    mqtt_commands:
+      - {"a": "status"}
+      - {"a": "gate", "gate": "GATE3", "s": 1}
+      - {"a": "getflash"}
+      - {"a": "gate", "gate": "GATE3", "s": 0}
+    http_endpoints:
+      - "/api?request={\"a\":\"status\"}"
+      - "/api?request={\"a\":\"gate\",\"g\":\"GATE4\",\"d\":\"5\"}"
+      - "/api?request={\"a\":\"getflash\"}"
+      - "/api?request={\"a\":\"gate\",\"g\":\"GATE4\",\"d\":\"0\"}"
+    http_method: GET
+    repeat: 2  # 2x celá sekvencia = 8 MQTT + 8 HTTP príkazov
+    delay_between_rounds_ms: 400
+    expected_mqtt_responses: 8
+    expected_http_success: 8
+    max_duration_ms: 10000
+
+# ====================================
+# QUEUE OVERFLOW TESTS (testovanie fronty)
+# ====================================
+queue_overflow_tests:
+  - id: QUEUE_01
+    name: "Queue overflow test (15 rapid MQTT commands)"
+    enabled: true
+    protocol: mqtt
+    command: {"a": "status"}
+    count: 15  # Viac než fronta (10 items), otestuje overflow handling
+    delay_between_ms: 100  # 100ms = rýchle ale nie príliš
+    expected_response_count: 15  # Všetky by mali byť spracované
+    max_duration_ms: 10000
+    allow_partial_success: true  # Ak zariadenie stratí nejaké, stále pass
+
+  - id: QUEUE_02
+    name: "Burst HTTP requests (20x rapid fire)"
+    enabled: true
+    protocol: http
+    endpoint: "/api?request={\"a\":\"status\"}"
+    method: GET
+    count: 20
+    delay_between_ms: 150
+    expected_success_count: 20
+    max_duration_ms: 8000
+    allow_partial_success: true
+
+  - id: QUEUE_03
+    name: "Combined burst (MQTT + HTTP, 30 total)"
+    enabled: true
+    mqtt_command: {"a": "status"}
+    http_endpoint: "/api?request={\"a\":\"status\"}"
+    http_method: GET
+    mqtt_count: 15
+    http_count: 15
+    delay_between_ms: 120  # Striedaj MQTT a HTTP každých 120ms
+    expected_mqtt_responses: 15
+    expected_http_success: 15
+    max_duration_ms: 12000
+    allow_partial_success: true

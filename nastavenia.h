@@ -16,6 +16,7 @@ unsigned int is_mqtt_allowed = 0; //priznak, ci je realizovane pripojenie cez mq
 String my_hostname = "eth-lilygo";
 String version   = "4.0.0"; //verzia jadra 3.3.5
 String uuid = ""; //ak je prazdna vygeneruje sa a ulozi sa do Flash, tato sa neda nastavit cez preferences ani tam nieje ulozena!
+bool verbose = false; //priznak pre debug vypisy (0=zakladne, 1=vsetky debug info)
 
 //Ak IP adresa je myIPAddress(0, 0, 0, 0) bude nahradena pridelenou zo siete inac ip adresa bude zadana statisky. Ostatne parametre budu z dhcp 
 bool useDHCP = true;  // true = DHCP, false = manuálne nastavenie

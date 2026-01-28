@@ -1,7 +1,7 @@
 # ========================================
 # STATUS INTEGRITY TESTS
 # ========================================
-# Testovanie konzistencie hodnôt v STATUS odpovedi:
+# Testovanie konzistencie hodnôt v gate_status odpovedi:
 # - gate_off_time == -1 keď GATE_DOWN
 # - gate_off_time == 0 keď GATE_UP nekonečne
 # - gate_off_time > current_millis keď GATE_UP s časovačom
@@ -28,7 +28,7 @@ tests:
         wait_after: 0.2
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "json_path"
           path: "gate_status.GATE1"
@@ -37,7 +37,7 @@ tests:
         wait_after: 0.2
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "json_path"
           path: "gate_off_time.GATE1"
@@ -59,7 +59,7 @@ tests:
         wait_after: 0.5
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "json_path"
           path: "gate_status.GATE2"
@@ -68,7 +68,7 @@ tests:
         wait_after: 0.2
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "json_path"
           path: "gate_off_time.GATE2"
@@ -97,11 +97,11 @@ tests:
         wait_after: 0.3
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "custom"
           validator: "check_gate_off_time_calculation"
-        note: "Kontrola: gate_off_time.GATE3 ≈ current_millis + 5000 (tolerance ±200ms)"
+        note: "Kontrola: gate_off_time.GATE3 ≈ current_millis + 5000 (tolerance ±800ms, MQTT latencia)"
         wait_after: 0.2
       
       - command:
@@ -125,7 +125,7 @@ tests:
         wait_after: 0.5
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "custom"
           validator: "check_gate_off_time_greater"
@@ -133,7 +133,7 @@ tests:
         wait_after: 2.0
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "json_path"
           path: "gate_status.GATE4"
@@ -142,7 +142,7 @@ tests:
         wait_after: 0.2
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "json_path"
           path: "gate_off_time.GATE4"
@@ -182,7 +182,7 @@ tests:
         wait_after: 0.5
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "custom"
           validator: "check_all_gates_integrity"
@@ -222,7 +222,7 @@ tests:
         wait_after: 0.3
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "custom"
           validator: "save_gate_off_time_1"
@@ -237,7 +237,7 @@ tests:
         wait_after: 0.3
       
       - command:
-          a: "status"
+          a: "gate_status"
         expected_response:
           type: "custom"
           validator: "check_gate_off_time_updated"

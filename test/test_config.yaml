@@ -183,13 +183,45 @@ tests:
 
   # ========== FLASH TESTY ==========
   - id: TC40
-    name: "SetFlash - nastavenie mqtt_port (len ak chceš meniť nastavenia)"
-    enabled: false  # vypnuté defaultne, aby sa nemenili nastavenia
+    name: "SetFlash - test zmeny my_hostname (s obnovením)"
+    command:
+      a: "getflash"
+    expected_type: "json_key"
+    expected: "getflash"
+    wait_after: 0.3
+    
+  - id: TC40b
+    name: "SetFlash - nastavenie test hodnoty"
     command:
       a: "setflash"
-      mqtt_port: 8883
+      my_hostname: "test-hostname-temp"
     expected_type: "contains"
-    expected: "mqtt_port"
+    expected: "my_hostname"
+    wait_after: 0.5
+    
+  - id: TC40c
+    name: "SetFlash - kontrola zmeny cez getflash"
+    command:
+      a: "getflash"
+    expected_type: "contains"
+    expected: "test-hostname-temp"
+    wait_after: 0.3
+    
+  - id: TC40d
+    name: "SetFlash - obnovenie na eth-lilygo"
+    command:
+      a: "setflash"
+      my_hostname: "eth-lilygo"
+    expected_type: "contains"
+    expected: "my_hostname"
+    wait_after: 0.5
+    
+  - id: TC40e
+    name: "SetFlash - kontrola obnovenia"
+    command:
+      a: "getflash"
+    expected_type: "contains"
+    expected: "eth-lilygo"
     
   - id: TC41
     name: "SetFlash - neplatná hodnota pre is_mqtt_allowed"

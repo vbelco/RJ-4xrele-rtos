@@ -8,6 +8,7 @@
 //==================================================================
 void serialTask(void* parameter) {
   static String buffer;
+  const size_t MAX_SERIAL_BUFFER = 4096; // Max 4KB pre serial buffer
   
   while (true) {
     while (Serial.available()) {
@@ -18,8 +19,8 @@ void serialTask(void* parameter) {
         
         if (buffer.startsWith("{") && buffer.endsWith("}")) {
           QueueItem item;
-          item.jsonCommand = buffer;
-          item.source = "serial";
+          buffer.toCharArray(item.jsonCommand, QUEUE_JSON_SIZE);
+          strcpy(item.source, "serial");
           xQueueSend(commandQueue, &item, 0);
         } else if (buffer.length() > 0) {
           Serial.print(F("Serial non-JSON: "));
@@ -27,10 +28,16 @@ void serialTask(void* parameter) {
         }
         buffer = "";
       } else {
-        buffer += c;
+        // Ochrana proti pretečeniu buffera
+        if (buffer.length() < MAX_SERIAL_BUFFER) {
+          buffer += c;
+        } else {
+          Serial.println(F("ERROR: Serial buffer overflow, resetting"));
+          buffer = "";
+        }
       }
     }
-    vTaskDelay(pdMS_TO_TICKS(10)); // 10ms delay
+    vTaskDelay(pdMS_TO_TICKS(50)); // 50ms delay = 20 kontrol/sec
   }
 }
 
@@ -79,7 +86,7 @@ void mqttTask(void* parameter) {
 void apiTask(void* parameter) {
   while (true) {
     server.handleClient();
-    vTaskDelay(pdMS_TO_TICKS(1)); // minimálne delay
+    vTaskDelay(pdMS_TO_TICKS(50)); // 50ms delay = 20 kontrol/sec
   }
 }
 
@@ -92,15 +99,26 @@ void relayTask(void* parameter) {
   while (true) {
     // 1. Spracuj príkazy z fronty
     if (xQueueReceive(commandQueue, &item, 0) == pdTRUE) {
+      // Debug: vypíš obsah a dĺžku JSON správy (len ak je verbose)
+      if (verbose) {
+        Serial.print("Processing JSON from ");
+        Serial.print(item.source);
+        Serial.print(" (len=");
+        Serial.print(strlen(item.jsonCommand));
+        Serial.print("): [");
+        Serial.print(item.jsonCommand);
+        Serial.println("]");
+      }
+      
       DynamicJsonDocument doc(8192);
       DeserializationError err = deserializeJson(doc, item.jsonCommand);
       
       if (!err) {
-        String result = handleJson(doc, item.source);
+        String result = handleJson(doc, String(item.source));
         
         // Odošli odpoveď podľa zdroja
-        if (item.source == "serial") {
-          // Pre Serial - formátovaný JSON output
+        if (strcmp(item.source, "serial") == 0) {
+          // Pre Serial - JSON output
           DynamicJsonDocument outDoc(8192);
           DeserializationError innerErr = deserializeJson(outDoc["result"], result);
           
@@ -109,10 +127,10 @@ void relayTask(void* parameter) {
           }
           
           String response;
-          serializeJsonPretty(outDoc, response);
+          serializeJson(outDoc, response);
           Serial.println(response);
           
-        } else if (item.source == "mqtt") {
+        } else if (strcmp(item.source, "mqtt") == 0) {
           // Pre MQTT - priama publikácia
           int resultLength = result.length();
           if (resultLength < SAFE_LENGTH) {
@@ -141,7 +159,7 @@ void relayTask(void* parameter) {
       }
     }
     
-    vTaskDelay(pdMS_TO_TICKS(10)); // 10ms = 100Hz kontrola
+    vTaskDelay(pdMS_TO_TICKS(50)); // 50ms = 20 kontrol/sec
   }
 }
 
@@ -152,16 +170,5 @@ void rgbLedTask(void* parameter) {
   while (true) {
     processRgbBlink();
     vTaskDelay(pdMS_TO_TICKS(50)); // 50ms = 20Hz refresh
-  }
-}
-
-//==================================================================
-// watchdogTask - reset watchdogu každých 20s
-//==================================================================
-void watchdogTask(void* parameter) {
-  while (true) {
-    vTaskDelay(pdMS_TO_TICKS(20000)); // 20 sekúnd
-    esp_task_wdt_reset();
-    Serial.println("Watchdog reset");
   }
 }

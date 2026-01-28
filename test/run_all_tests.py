@@ -12,6 +12,7 @@ from mqtt_test_runner import MQTTTestRunner, Colors
 from http_test_runner import HTTPTestRunner
 from timing_test_runner import TimingTestRunner
 from status_integrity_test_runner import StatusIntegrityTestRunner
+from stress_test_runner import StressTestRunner
 
 def create_unified_html_report(mqtt_results, gate_results, http_results, timing_results, status_timing_results=None, integrity_results=None, total_duration=0, filename="unified_test_report.html"):
     """Vytvorí jeden spoločný HTML report v pôvodnom formáte"""
@@ -216,6 +217,12 @@ def main():
                        help='Preskočiť testy pre textové názvy pinov')
     parser.add_argument('--skip-timing-tests', action='store_true',
                        help='Preskočiť časové testy pre gate_ms príkazy')
+    parser.add_argument('--stress-only', action='store_true',
+                       help='Spustiť len stress testy')
+    parser.add_argument('--skip-stress-tests', action='store_true',
+                       help='Preskočiť stress testy')
+    parser.add_argument('--stress-config', default='stress_test_config.yaml',
+                       help='Stress test konfiguračný súbor')
     
     args = parser.parse_args()
     
@@ -225,15 +232,17 @@ def main():
     print(f"Dátum: {start_time.strftime('%Y-%m-%d %H:%M:%S')}\n")
     
     # Rozhodnutie ktoré testy spustiť
-    run_mqtt = not args.http_only
-    run_http = not args.mqtt_only
+    run_mqtt = not args.http_only and not args.stress_only
+    run_http = not args.mqtt_only and not args.stress_only
+    run_stress = not args.skip_stress_tests or args.stress_only
     
     results = {
         'mqtt': None,
         'mqtt_gate_pins': None,
         'mqtt_timing': None,
         'mqtt_status': None,
-        'http': None
+        'http': None,
+        'stress': None
     }
     
     # Dáta pre unified report
@@ -242,7 +251,8 @@ def main():
         'mqtt_gate_pins': None,
         'mqtt_timing': None,
         'mqtt_status': None,
-        'http': None
+        'http': None,
+        'stress': None
     }
     
     # ========== MQTT TESTY ==========
@@ -327,6 +337,34 @@ def main():
             print(f"{Colors.RED}✗ HTTP config súbor nebol nájdený: {args.http_config}{Colors.RESET}")
             results['http'] = 1
     
+    # ========== STRESS TESTY ==========
+    if run_stress:
+        print_header("STRESS TESTY (Rapid Sequential + Parallel)")
+        
+        if os.path.exists(args.stress_config):
+            stress_runner = StressTestRunner(args.stress_config)
+            stress_success = stress_runner.run_all_tests()
+            results['stress'] = 0 if stress_success else 1
+            # Konvertuj stress výsledky do formátu pre unified report
+            test_data['stress'] = {
+                'tests': []
+            }
+            for result in stress_runner.results:
+                test_data['stress']['tests'].append({
+                    'id': result.test_id,
+                    'name': result.name,
+                    'status': 'passed' if result.passed else 'failed',
+                    'command': f"{result.actual_count}/{result.expected_count} responses",
+                    'expected': result.expected_count,
+                    'actual': result.actual_count,
+                    'duration': result.duration,
+                    'error': result.error
+                })
+        else:
+            print(f"{Colors.YELLOW}⚠ Stress config nebol nájdený: {args.stress_config}{Colors.RESET}")
+            print(f"{Colors.YELLOW}  Preskakujem stress testy{Colors.RESET}")
+            results['stress'] = None
+    
     # ========== FINÁLNY SUMÁR ==========
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
@@ -371,6 +409,10 @@ def main():
     if results['http'] is not None:
         http_status = f"{Colors.GREEN}✓ PASSED{Colors.RESET}" if results['http'] == 0 else f"{Colors.RED}✗ FAILED{Colors.RESET}"
         print(f"HTTP Testy:                   {http_status}")
+    
+    if results.get('stress') is not None:
+        stress_status = f"{Colors.GREEN}✓ PASSED{Colors.RESET}" if results['stress'] == 0 else f"{Colors.RED}✗ FAILED{Colors.RESET}"
+        print(f"Stress Testy:                 {stress_status}")
     
     print(f"\nCelkový čas vykonávania: {duration:.2f}s")
     

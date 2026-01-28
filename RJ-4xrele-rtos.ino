@@ -52,9 +52,12 @@ Stav stav = {
 };
 
 // FreeRTOS Queue pre príkazy
+#define QUEUE_JSON_SIZE 2048  // 2KB pre väčšie JSON príkazy s parametrami
+#define QUEUE_SOURCE_SIZE 16
+
 struct QueueItem {
-  String jsonCommand;
-  String source; // "serial", "mqtt", "api"
+  char jsonCommand[QUEUE_JSON_SIZE];
+  char source[QUEUE_SOURCE_SIZE]; // "serial", "mqtt", "api"
 };
 
 QueueHandle_t commandQueue;
@@ -215,12 +218,12 @@ void setup()
   }
   
   // Vytvorenie FreeRTOS taskov (scheduler rozhoduje o core)
-  xTaskCreate(serialTask,    "Serial",    4096, NULL, 1, NULL);
-  xTaskCreate(mqttTask,      "MQTT",      8192, NULL, 1, NULL);
-  xTaskCreate(apiTask,       "API",       8192, NULL, 1, NULL);
-  xTaskCreate(relayTask,     "Relay",     4096, NULL, 2, NULL);
-  xTaskCreate(rgbLedTask,    "RGB",       2048, NULL, 1, NULL);
-  xTaskCreate(watchdogTask,  "Watchdog",  2048, NULL, 1, NULL);
+  // Stack sizes zvýšené kvôli veľkým JSON dokumentom (send_help = 5.5KB)
+  xTaskCreate(serialTask,    "Serial",    6144, NULL, 1, NULL);   // 6KB - QueueItem + obmedzený buffer
+  xTaskCreate(mqttTask,      "MQTT",      8192, NULL, 1, NULL);   // 8KB
+  xTaskCreate(apiTask,       "API",      20480, NULL, 1, NULL);   // 20KB - String + JsonDoc + send_help
+  xTaskCreate(relayTask,     "Relay",    20480, NULL, 2, NULL);   // 20KB - QueueItem + JsonDoc + send_help
+  xTaskCreate(rgbLedTask,    "RGB",       2048, NULL, 1, NULL);   // 2KB
   
   Serial.println("FreeRTOS tasks created - scheduler running!");
   Serial.println("Processing to FreeRTOS tasks, good luck!");
@@ -231,6 +234,9 @@ void setup()
 **********************************************/
 void loop()
 {
+  // Reset watchdogu pre loopTask (každých 15s, timeout je 40s)
+  esp_task_wdt_reset();
+  
   // Prázdny loop - FreeRTOS scheduler prevezme kontrolu
-  vTaskDelay(pdMS_TO_TICKS(1000));
+  vTaskDelay(pdMS_TO_TICKS(15000)); // 15 sekúnd
 } // end loop

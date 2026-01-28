@@ -52,6 +52,7 @@ class MQTTTestRunner:
         self.results: List[TestResult] = []
         self.connected = False
         self.save_individual_report = save_individual_report
+        self.stored_values = {}  # Pre uloženie hodnôt počas testov
         
     def load_env(self):
         """Načítanie .env súboru"""

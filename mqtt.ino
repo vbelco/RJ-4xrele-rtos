@@ -35,16 +35,15 @@ void mqttCallback(char* topic, uint8_t* payload, unsigned int len) {
   Serial.write(payload, len);
   Serial.println();
 
-  // Konverzia payload na String
-  String messageTemp;
-  for (unsigned int i = 0; i < len; i++) {
-    messageTemp += (char)payload[i];
-  }
-  
-  // Odoslať do command queue pre spracovanie v relayTask
+  // Konverzia payload do QueueItem
   QueueItem item;
-  item.jsonCommand = messageTemp;
-  item.source = "mqtt";
+  
+  // Skopíruj payload do item.jsonCommand (s ochranou proti pretečeniu)
+  unsigned int copyLen = (len < QUEUE_JSON_SIZE - 1) ? len : (QUEUE_JSON_SIZE - 1);
+  memcpy(item.jsonCommand, payload, copyLen);
+  item.jsonCommand[copyLen] = '\0'; // Null terminátor
+  
+  strcpy(item.source, "mqtt");
   
   if (xQueueSend(commandQueue, &item, 0) != pdTRUE) {
     Serial.println("Failed to send MQTT command to queue!");

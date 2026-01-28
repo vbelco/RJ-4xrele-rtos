@@ -57,11 +57,12 @@ class StatusIntegrityTestRunner(TimingTestRunner):
         else:
             return False, f"Neznámy validátor: {validator_name}"
     
-    def _validate_gate_off_time_calculation(self, status, gate, duration_ms, tolerance=200):
+    def _validate_gate_off_time_calculation(self, status, gate, duration_ms, tolerance=800):
         """
         Kontrola či gate_off_time ≈ current_millis + duration (s toleranciou)
         
         Poznámka: ESP32 môže mať malé oneskorenie medzi zapnutím a STATUS dotazom
+        Tolerancia 800ms pokrýva MQTT latenciu (~300ms) + spracovanie (~200ms)
         """
         current_millis = status.get('current_millis')
         gate_off_time = status.get('gate_off_time', {}).get(gate)
@@ -83,9 +84,9 @@ class StatusIntegrityTestRunner(TimingTestRunner):
         remaining = gate_off_time - current_millis
         
         # Očakávaný zostávajúci čas je duration_ms (mínus čas medzi zapnutím a dotazom)
-        # Tolerancia: akceptujeme -500ms až +tolerance (kvôli network delay)
-        if remaining < (duration_ms - 500) or remaining > (duration_ms + tolerance):
-            return False, f"Zostávajúci čas {remaining}ms je mimo očakávania {duration_ms}ms (±{tolerance}ms, -500ms)"
+        # Tolerancia: akceptujeme -800ms až +tolerance (kvôli network delay)
+        if remaining < (duration_ms - 800) or remaining > (duration_ms + tolerance):
+            return False, f"Zostávajúci čas {remaining}ms je mimo očakávania {duration_ms}ms (±{tolerance}ms, -800ms)"
         
         return True, f"OK: gate_off_time = {gate_off_time}, current_millis = {current_millis}, zostáva {remaining}ms"
     
