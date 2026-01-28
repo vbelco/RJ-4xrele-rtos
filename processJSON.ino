@@ -96,7 +96,7 @@ String handleJson(DynamicJsonDocument& doc, const String& request_from) {
     String odpoved = "";
     
     //ak je dany parameter min_d && 
-    if (doc["min_d"] && (digitalRead(gpio) == GATE_DOWN))
+    if (doc["min_d"] && (pinStav[gpio] == GATE_DOWN))
       duration = (unsigned int) doc["min_d"];
 
     /*****  vypnutie portu ak je trvanie nastavene na 0 *******/
@@ -147,7 +147,7 @@ String handleJson(DynamicJsonDocument& doc, const String& request_from) {
     String odpoved = "";
 
     //ak je dany parameter min_d && 
-    if (doc["min_d"] && (digitalRead(gpio) == GATE_DOWN))
+    if (doc["min_d"] && (pinStav[gpio] == GATE_DOWN))
       duration = (unsigned int) doc["min_d"];
 
     /*****  vypnutie portu ak je trvanie nastavene na 0 *******/
@@ -283,6 +283,36 @@ String handleJson(DynamicJsonDocument& doc, const String& request_from) {
     preferences.end();
     Serial.println("Verbose mode DISABLED");
     return rid.length() > 0 ? "{\"result\":\"verbose disabled\",\"rid\":\"" + rid + "\"}" : "verbose disabled";
+  }
+
+  /**
+   *  zapnutie vpouzivania mqtt
+   * {  "a":"mqtt_on" }
+   */
+  else if (strcmp(action, "mqtt_on") == 0) {
+    is_mqtt_allowed = 1;
+    preferences.begin("nastavenia", false);
+      preferences.putUInt("is_mqtt_allowed", is_mqtt_allowed);
+    preferences.end();
+    if (is_mqtt_allowed == 0) { stav.mqtt=2; updateLedFromStav(); mqtt.disconnect(); }
+    if (is_mqtt_allowed == 1) { stav.mqtt=0; updateLedFromStav(); }
+    Serial.println("MQTT mode ENABLED");
+    return rid.length() > 0 ? "{\"result\":\"mqtt enabled\",\"rid\":\"" + rid + "\"}" : "mqtt enabled";
+  }
+
+  /**
+   *  vypnutie vpouzivania mqtt
+   * {  "a":"mqtt_off" }
+   */
+  else if (strcmp(action, "mqtt_off") == 0) {
+    is_mqtt_allowed = 0;
+    preferences.begin("nastavenia", false);
+      preferences.putUInt("is_mqtt_allowed", is_mqtt_allowed);
+    preferences.end();
+    if (is_mqtt_allowed == 0) { stav.mqtt=2; updateLedFromStav(); mqtt.disconnect(); }
+    if (is_mqtt_allowed == 1) { stav.mqtt=0; updateLedFromStav(); }
+    Serial.println("MQTT mode DISABLED");
+    return rid.length() > 0 ? "{\"result\":\"mqtt disabled\",\"rid\":\"" + rid + "\"}" : "mqtt disabled";
   }
   
   /**
@@ -574,6 +604,18 @@ String send_help(){
   { JsonObject c = help.createNestedObject();
     c["action"]="verbose_off"; c["description"]="Vypnutie debug výpisov (verbose mode)";
     c.createNestedObject("example")["a"]="verbose_off";
+  }
+
+  // is_mqtt_allowed
+  { JsonObject c = help.createNestedObject();
+    c["action"]="mqtt_on"; c["description"]="Zapnutie pouzivania mqtt podla nastavenych hodnot";
+    c.createNestedObject("example")["a"]="mqtt_on";
+  }
+
+  // is_mqtt_allowed
+  { JsonObject c = help.createNestedObject();
+    c["action"]="mqtt_off"; c["description"]="Vypnutie pouzivania mqtt podla nastavenych hodnot";
+    c.createNestedObject("example")["a"]="mqtt_off";
   }
 
   if (verbose) {

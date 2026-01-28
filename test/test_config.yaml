@@ -116,8 +116,8 @@ tests:
       g: "4"
       d: "3000"
       min_d: "5000"
-    expected_type: "exact"
-    expected: ""
+    expected_type: "contains"
+    expected: "gate_ms"
     wait_after: 2
     
   - id: TC22

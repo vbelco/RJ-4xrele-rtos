@@ -39,7 +39,7 @@ String nazov_online = "online"; /*nazov kanala kde sazariadenie prihlasi ked sa 
 //nastavenie web servera na ktorom bude pocuvat esp32
 #define WEB_SERVER_PORT 9090 //port na ktorom pocuva esp32 api server
 
-/*nastavenie stavu relatok, cije HIGH zopnute alebo rozopnute*/
+/*nastavenie stavu relatok*/
 #define GATE_UP HIGH
 #define GATE_DOWN LOW
 
@@ -48,19 +48,6 @@ String nazov_online = "online"; /*nazov kanala kde sazariadenie prihlasi ked sa 
 #define GATE2 12 //rele 
 #define GATE3 15 //rele 
 #define GATE4 33 //rele 
-
-/* definicia mapu konca casov vypnutia portov  -> musi zodpovedat definicii pinov
- * -1 = port je vypnuty (GATE_DOWN)
- *  0 = port je zapnuty natrvalo (nekonecne)
- * >0 = port sa vypne v case koniec[port]
- */
-std::map<int, long> koniec{
-    {GATE1, -1},
-    {GATE2, -1},
-    {GATE3, -1},
-    {GATE4, -1}
-};
-std::map<int, long>::iterator itr; // definicia iteratora pre map konca casov
 
 /** nastavenie RGB led */
 #define RGB_LED_PIN 32 // na ktorom pine je zavesena

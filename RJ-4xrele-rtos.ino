@@ -89,6 +89,27 @@ bool gate2_status = false;
 bool gate3_status = false;
 bool gate4_status = false;
 
+/* definicia mapu konca casov vypnutia portov  -> musi zodpovedat definicii pinov
+ * -1 = port je vypnuty (GATE_DOWN)
+ *  0 = port je zapnuty natrvalo (nekonecne)
+ * >0 = port sa vypne v case koniec[port]
+ */
+std::map<int, long> koniec{
+    {GATE1, -1},
+    {GATE2, -1},
+    {GATE3, -1},
+    {GATE4, -1}
+};
+std::map<int, long>::iterator itr; // definicia iteratora pre map konca casov
+
+/* definicia mapu logických stavov pinov (pre relé moduly s optočlenmi, kde digitalRead nefunguje) */
+std::map<int, int> pinStav{
+    {GATE1, GATE_DOWN},
+    {GATE2, GATE_DOWN},
+    {GATE3, GATE_DOWN},
+    {GATE4, GATE_DOWN}
+};
+
 Preferences preferences; /* spristupnenie flash pamate */
 
 //minimalna dlzka otvorenia brany

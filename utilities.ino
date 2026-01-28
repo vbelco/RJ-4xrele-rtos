@@ -8,7 +8,7 @@ String get_gate_status(){
 
   JsonObject gateStatus = doc.createNestedObject("gate_status");
   for (const auto& [pin, _] : koniec) {
-    const char* stav = (digitalRead(pin) == GATE_UP) ? "GATE_UP" : "GATE_DOWN";
+    const char* stav = (pinStav[pin] == GATE_UP) ? "GATE_UP" : "GATE_DOWN";
     
     // Použiť textový názov namiesto čísla pinu
     String gateName;
@@ -62,7 +62,7 @@ String get_info(){
 
   JsonObject gateStatus = doc.createNestedObject("gate_status");
   for (const auto& [pin, _] : koniec) {
-    const char* stav = (digitalRead(pin) == GATE_UP) ? "GATE_UP" : "GATE_DOWN";
+    const char* stav = (pinStav[pin] == GATE_UP) ? "GATE_UP" : "GATE_DOWN";
     
     // Použiť textový názov namiesto čísla pinu
     String gateName;

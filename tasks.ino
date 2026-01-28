@@ -97,6 +97,9 @@ void relayTask(void* parameter) {
   QueueItem item;
   
   while (true) {
+    // Aktualizácia currentMillis na začiatku každého cyklu
+    currentMillis = millis();
+    
     // 1. Spracuj príkazy z fronty
     if (xQueueReceive(commandQueue, &item, 0) == pdTRUE) {
       // Debug: vypíš obsah a dĺžku JSON správy (len ak je verbose)
@@ -150,7 +153,6 @@ void relayTask(void* parameter) {
     }
     
     // 2. Kontrola timerov relé
-    currentMillis = millis();
     long currentMillisLong = (long)currentMillis;
     
     for (itr = koniec.begin(); itr != koniec.end(); itr++) {
